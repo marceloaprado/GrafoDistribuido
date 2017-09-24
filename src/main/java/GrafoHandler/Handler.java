@@ -23,7 +23,7 @@ import org.apache.thrift.TException;
 
 /**
  *
- * @author MarceloPrado
+ * @author MarceloPrado, Rhaniel Cristhian
  */
 public class Handler implements GrafoHandler.Iface{
     HashMap<Integer, Vertice> V = new HashMap<>();

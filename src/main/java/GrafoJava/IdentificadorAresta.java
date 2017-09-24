@@ -9,7 +9,7 @@ import GrafoThrift.Identificador;
 
 /**
  *
- * @author MarceloPrado
+ * @author MarceloPrado, Rhaniel Cristhian
  */
 public class IdentificadorAresta extends Identificador{
     public int v1, v2, size;
