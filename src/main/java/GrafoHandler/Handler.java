@@ -12,8 +12,12 @@ import GrafoThrift.Vertice;
 import GrafoThrift.GrafoHandler;
 import GrafoThrift.Aresta;
 import GrafoThrift.NotFoundEx;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.thrift.TException;
 
@@ -30,23 +34,22 @@ public class Handler implements GrafoHandler.Iface{
     @Override
     public boolean addAresta(Aresta a) throws TException {
         if(a.getV1() != a.getV2()){
-            IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome);
-            IdentificadorAresta ida1 = new IdentificadorAresta(a.getV2().nome, a.getV1().nome);
+            IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, true,  A.size());
+            IdentificadorAresta ida1 = new IdentificadorAresta(a.getV2().nome, a.getV1().nome, true, A.size());
+            IdentificadorAresta ida2 = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, false, A.size());
+            
             AtomicBoolean emUso = new AtomicBoolean(false); 
             boolean ok = false;        
-            if(emUso.compareAndSet(false,true)){ 
-                //regiao critica
-                //bomba de insulina
-                if(!a.isDirecionada){//decidir o que fazer em relação ao grafo poder conter arestas direcionadas             
-                    if(!A.containsKey(ida) && !A.containsKey(ida1)){
-                        A.put(ida, a);
+            
+            if(emUso.compareAndSet(false,true)){ //regiao critica                
+                if(!a.isDirecionada()){ //se não for direcionada, verificar se existe alguma direcionada e não direcionada que entra em conflito
+                    if(!A.containsKey(ida) && !A.containsKey(ida1) && !A.containsKey(ida2)){
+                        A.put(ida2, a);
                         ok = true;
                     }
                 }
-                else{
-                    Aresta ar = A.get(ida);
-                    
-                    if(!A.containsKey(ida)){
+                else{//se for direcionada, procurar alguma direcionada ou não direcionada que entre em conflito                    
+                    if(!A.containsKey(ida) && !A.containsKey(ida2)){
                         A.put(ida, a);
                         ok = true;
                     }
@@ -60,10 +63,16 @@ public class Handler implements GrafoHandler.Iface{
     
     @Override
     public Aresta buscaAresta(int v1, int v2) throws NotFoundEx, TException {
-        IdentificadorAresta ida = new IdentificadorAresta(v1, v2);
+        IdentificadorAresta ida = new IdentificadorAresta(v1, v2, true, A.size());
         Aresta a = A.get(ida);
         if(a != null)
             return a;
+        else{
+            ida.isDirecionada = false;
+            a = A.get(ida);
+            if(a != null)
+                return a;
+        }
         
         throw new NotFoundEx();
     }
@@ -79,7 +88,7 @@ public class Handler implements GrafoHandler.Iface{
 
     @Override
     public boolean atualizaAresta(Aresta a) throws TException {
-        IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome);
+        IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, a.isDirecionada(), A.size());
         AtomicBoolean emUso = new AtomicBoolean(false); 
         boolean ok = false;
         if(emUso.compareAndSet(false,true)){ 
@@ -143,7 +152,24 @@ public class Handler implements GrafoHandler.Iface{
             Vertice vt = V.get(id);
             
             if(vt != null){
+                //Cria um arraylist de keys a serem removidas posteriormente
+                ArrayList<Identificador> arRemovidas = new ArrayList<>();
                 
+                //Percorre a hash de arestas e remove aquela que tiver um dos vértices com o nome igual ao parametro "id"
+                Set<Map.Entry<Identificador, Aresta>> arestas = A.entrySet();                
+                for(Iterator i = arestas.iterator(); i.hasNext();) {
+                    Map.Entry<Identificador, Aresta> ar;
+                    ar = (Map.Entry<Identificador, Aresta>) i.next();
+                    Aresta valor = ar.getValue();
+                    
+                    //Adiciona no arraylist as chaves a serem removidas
+                    if(valor.getV1().getNome() == id || valor.getV2().getNome() == id)
+                        arRemovidas.add(ar.getKey());
+                }
+                
+                //Remove as chaves
+                for(Identificador i:arRemovidas)
+                    A.remove(i);                    
             }
             else
                 ok = false;
@@ -155,11 +181,11 @@ public class Handler implements GrafoHandler.Iface{
 
     @Override
     public List<Vertice> listarVertices() throws TException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (List<Vertice>)V.values();        
     }
 
     @Override
     public List<Aresta> listarArestas() throws TException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (List<Aresta>)A.values();
     }
 }
