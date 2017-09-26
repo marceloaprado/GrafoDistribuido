@@ -33,7 +33,7 @@ public class Handler implements GrafoHandler.Iface{
     
     @Override
     public boolean addAresta(Aresta a) throws TException {
-        if(a.getV1() != a.getV2()){
+        if(a.getV1() != a.getV2() && V.containsKey(a.getV1().getNome()) && V.containsKey(a.getV2().getNome())){
             IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, true,  A.size());
             IdentificadorAresta ida1 = new IdentificadorAresta(a.getV2().nome, a.getV1().nome, true, A.size());
             IdentificadorAresta ida2 = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, false, A.size());
@@ -68,7 +68,7 @@ public class Handler implements GrafoHandler.Iface{
         if(a != null)
             return a;
         else{
-            ida.isDirecionada = false;
+            ida.setDirecionada(false);
             a = A.get(ida);
             if(a != null)
                 return a;
@@ -169,10 +169,10 @@ public class Handler implements GrafoHandler.Iface{
                 
                 //Remove as chaves
                 for(Identificador i:arRemovidas)
-                    A.remove(i);                    
+                    A.remove(i); 
+                V.remove(vt.nome);
+                ok = true;
             }
-            else
-                ok = false;
             emUso.set(false); 
             return ok;
         }
@@ -180,12 +180,18 @@ public class Handler implements GrafoHandler.Iface{
     }
 
     @Override
-    public List<Vertice> listarVertices() throws TException {
-        return (List<Vertice>)V.values();        
+    public List<Vertice> listarVertices() throws NotFoundEx, TException {
+        if(!V.isEmpty())           
+            return new ArrayList(V.values());      
+            
+        throw new NotFoundEx();
     }
 
     @Override
-    public List<Aresta> listarArestas() throws TException {
-        return (List<Aresta>)A.values();
+    public List<Aresta> listarArestas() throws NotFoundEx, TException {
+        if(!A.isEmpty())
+            return new ArrayList(A.values());
+        
+        throw new NotFoundEx();
     }
 }
