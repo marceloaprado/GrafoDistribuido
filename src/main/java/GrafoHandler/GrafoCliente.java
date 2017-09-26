@@ -5,6 +5,8 @@
  */
 package GrafoHandler;
 
+import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import org.apache.thrift.TException;
@@ -17,7 +19,6 @@ import GrafoThrift.Aresta;
 import GrafoThrift.GrafoHandler;
 import GrafoThrift.NotFoundEx;
 import GrafoThrift.Vertice;
-import java.util.ArrayList;
 
 /**
  *
@@ -75,7 +76,7 @@ public class GrafoCliente {
     			Vertice v1;
     			Vertice v2;
     			Aresta a;
-    			
+    			Vertice v;
             	switch(menu){
             		case 1:
             			int menuAresta = 0;
@@ -103,12 +104,12 @@ public class GrafoCliente {
 	            			switch(menuAresta){
                                 //criar a partir de vértices existentes
                             	case 1:
-                            		System.out.println("###########################################################");
-                                    System.out.println("#       Criar Aresta apartir de vértices existentes       #");
-                                    System.out.print("#  Informe o identificador do primeiro vértice: ");
-                                    identificador = scan.nextInt();
-		                            scan.nextLine();
 		                            try{
+		                            	System.out.println("###########################################################");
+	                                    System.out.println("#       Criar Aresta apartir de vértices existentes       #");
+	                                    System.out.print("#  Informe o identificador do primeiro vértice: ");
+		                            	identificador = scan.nextInt();
+			                            scan.nextLine();
 		                            	v1 = client.buscaVertice(identificador);
 		                            	System.out.println("#  O vértice v1 eh: "+v1.toString());
 		                            	System.out.print("#  Informe o identificador do segundo vértice: ");
@@ -147,7 +148,7 @@ public class GrafoCliente {
 		                            }catch(NotFoundEx e){
 		                            	System.out.println("#             		Vértice não encontrado                #");     
 		                            	System.out.println("###########################################################");
-		                            }catch(NumberFormatException e){
+		                            }catch(InputMismatchException e){
 		                            	System.out.println("#              Parâmetro informado errado                #");
 		                                System.out.println("##########################################################");
 		                            }
@@ -235,7 +236,7 @@ public class GrafoCliente {
 		                            	}
 		                            	System.out.println();
 		                            	menuAresta = 3;
-	            					}catch(NumberFormatException e){
+	            					}catch(InputMismatchException e){
 		                            	System.out.println("#              Parâmetro informado errado                #");
 		                                System.out.println("##########################################################");
 		                            }
@@ -254,14 +255,13 @@ public class GrafoCliente {
                         System.out.println("#                                                         #");
                         System.out.println("###########################################################");
                         System.out.println();
-                        
-                        System.out.println("###########################################################");
-                        System.out.print("#  Informe os identificadores da aresta: ");
-                        identificador = scan.nextInt();
-                        identificador1 = scan.nextInt();
-                        scan.nextLine();
-                        
                         try{
+	                        System.out.println("###########################################################");
+	                        System.out.print("#  Informe os identificadores da aresta: ");
+	                        identificador = scan.nextInt();
+	                        identificador1 = scan.nextInt();
+	                        scan.nextLine();
+
                             a = client.buscaAresta(identificador,identificador1);                            
                             if(a != null){
                                 System.out.println(a.toString());
@@ -269,7 +269,7 @@ public class GrafoCliente {
                         }catch(NotFoundEx nfe){
                             System.out.println("#                 Aresta não encontrado                  #");
                             System.out.println("##########################################################");
-                        }catch(NumberFormatException e){
+                        }catch(InputMismatchException e){
                         	System.out.println("#              Parâmetro informado errado                #");
                             System.out.println("##########################################################");
                         }
@@ -281,13 +281,14 @@ public class GrafoCliente {
                         System.out.println("#                                                         #");
                         System.out.println("###########################################################");
                         System.out.println();
-                        
-                        System.out.println("###########################################################");
-                        System.out.print("#  Informe os identificadores da aresta: ");
-                        identificador = scan.nextInt();
-                        identificador1 = scan.nextInt();
-                        scan.nextLine();
+                       
                         try{
+	                        System.out.println("###########################################################");
+	                        System.out.print("#  Informe os identificadores da aresta: ");
+	                        identificador = scan.nextInt();
+	                        identificador1 = scan.nextInt();
+	                        scan.nextLine();
+                        
                             a = client.buscaAresta(identificador,identificador1);
                             
                             if(a != null){
@@ -322,7 +323,7 @@ public class GrafoCliente {
                         }catch(NotFoundEx nfe){
                             System.out.println("#                 Aresta não encontrado                   #");
                             System.out.println("###########################################################");
-                        }catch(NumberFormatException e){
+                        }catch(InputMismatchException e){
                         	System.out.println("#              Parâmetro informado errado                #");
                             System.out.println("##########################################################");
                         }
@@ -356,33 +357,38 @@ public class GrafoCliente {
                             System.out.println("#                                                         #");
                             System.out.println("###########################################################");
                             System.out.println();
-                            
-                            System.out.println("###########################################################");
-                            System.out.print("#  Informe o identificador do vértice: ");
-                            identificador = scan.nextInt();
-                            scan.nextLine();
-                           
-                            System.out.print("#  Informe a cor do vértice: ");
-                            cor = scan.nextInt();
-                            scan.nextLine();
-                            
-                            System.out.print("#  Informe o peso do vértice: ");
-                            peso = scan.nextDouble();
-                            scan.nextLine();
-                            
-                            System.out.print("#  Informe a descrição do vértice: ");
-                            descricao = scan.nextLine();
-                            
-                            Vertice v = new Vertice(identificador, cor, descricao, peso);
-                            
-                            if(client.addVertice(v)){
-                                    System.out.println("#                Vértice criado com sucesso               #");
-                                    System.out.println("###########################################################");
-                            }else{
-                                    System.out.println("#                 Falha ao criar Vértice                  #");
-                                    System.out.println("###########################################################");
+                            try{
+                            	System.out.println("###########################################################");
+                                System.out.print("#  Informe o identificador do vértice: ");
+                                identificador = scan.nextInt();
+                                scan.nextLine();
+                               
+                                System.out.print("#  Informe a cor do vértice: ");
+                                cor = scan.nextInt();
+                                scan.nextLine();
+                                
+                                System.out.print("#  Informe o peso do vértice: ");
+                                peso = scan.nextDouble();
+                                scan.nextLine();
+                                
+                                System.out.print("#  Informe a descrição do vértice: ");
+                                descricao = scan.nextLine();
+                                
+                                v = new Vertice(identificador, cor, descricao, peso);
+                                
+                                if(client.addVertice(v)){
+                                        System.out.println("#                Vértice criado com sucesso               #");
+                                        System.out.println("###########################################################");
+                                }else{
+                                        System.out.println("#                 Falha ao criar Vértice                  #");
+                                        System.out.println("###########################################################");
+                                }
+                                System.out.println();
+                            }catch(InputMismatchException e){
+                            	System.out.println("#              Parâmetro informado errado                #");
+                                System.out.println("##########################################################");
                             }
-                            System.out.println();
+                            
 
                             
                             break;
@@ -393,13 +399,12 @@ public class GrafoCliente {
                             System.out.println("#                                                         #");
                             System.out.println("###########################################################");
                             System.out.println();
-                            
-                            System.out.println("###########################################################");
-                            System.out.print("#  Informe o identificador do vértice: ");
-                            identificador = scan.nextInt();
-                            scan.nextLine();
-                            
                             try{
+	                            System.out.println("###########################################################");
+	                            System.out.print("#  Informe o identificador do vértice: ");
+	                            identificador = scan.nextInt();
+	                            scan.nextLine();
+
                                 v = client.buscaVertice(identificador);
                                 
                                 if(v != null){
@@ -408,6 +413,9 @@ public class GrafoCliente {
                             }catch(NotFoundEx nfe){
                                 System.out.println("#                 Vértice não encontrado                  #");
                                 System.out.println("###########################################################");
+                            }catch(InputMismatchException e){
+                            	System.out.println("#              Parâmetro informado errado                #");
+                                System.out.println("##########################################################");
                             }
                             
             			break;            		
@@ -419,12 +427,13 @@ public class GrafoCliente {
                             System.out.println("###########################################################");
                             System.out.println();
                             
-                            System.out.println("###########################################################");
-                            System.out.print("#  Informe o identificador do vértice: ");
-                            identificador = scan.nextInt();
-                            scan.nextLine();
-                            
                             try{
+	                            System.out.println("###########################################################");
+	                            System.out.print("#  Informe o identificador do vértice: ");
+	                            identificador = scan.nextInt();
+	                            scan.nextLine();
+	                            
+                           
                                 v = client.buscaVertice(identificador);
                                 
                                 if(v != null){
@@ -455,8 +464,10 @@ public class GrafoCliente {
                             }catch(NotFoundEx nfe){
                                 System.out.println("#                 Vértice não encontrado                  #");
                                 System.out.println("###########################################################");
+                            }catch(InputMismatchException e){
+                            	System.out.println("#              Parâmetro informado errado                #");
+                                System.out.println("##########################################################");
                             }
-                           
                             break;
             		case 8:
                             System.out.println("###########################################################");
@@ -465,20 +476,27 @@ public class GrafoCliente {
                             System.out.println("#                                                         #");
                             System.out.println("###########################################################");
                             System.out.println();
-                            
-                            System.out.println("###########################################################");
-                            System.out.print("#  Informe o identificador do vértice: ");
-                            identificador = scan.nextInt();
-                            scan.nextLine();
-                                                        
-                            if(!client.excluiVertice(identificador)){
-                                System.out.println("#            Não foi possível excluir o vértice           #");
-                                System.out.println("###########################################################");
-                            }else{
-                                System.out.println("#              Vértice excluído com sucesso               #");
-                                System.out.println("###########################################################");
-                            }
+                            try{
+                            	System.out.println("###########################################################");
+                                System.out.print("#  Informe o identificador do vértice: ");
+                                identificador = scan.nextInt();
+                                scan.nextLine();
+                                                            
+                                if(!client.excluiVertice(identificador)){
+                                    System.out.println("#            Não foi possível excluir o vértice           #");
+                                    System.out.println("###########################################################");
+                                }else{
+                                    System.out.println("#              Vértice excluído com sucesso               #");
+                                    System.out.println("###########################################################");
+                                }
 
+                            }catch(NotFoundEx nfe){
+                                System.out.println("#                 Vértice não encontrado                  #");
+                                System.out.println("###########################################################");
+                            }catch(InputMismatchException e){
+                            	System.out.println("#              Parâmetro informado errado                #");
+                                System.out.println("##########################################################");
+                            }
                             break;
             		case 9:
                             System.out.println("###########################################################");
@@ -498,6 +516,9 @@ public class GrafoCliente {
                             catch(NotFoundEx nfe){
                                 System.out.println("#             Não existem vértices cadastrados            #");
                                 System.out.println("###########################################################");                    
+                            }catch(InputMismatchException e){
+                            	System.out.println("#              Parâmetro informado errado                #");
+                                System.out.println("##########################################################");
                             }
                             break;
             		case 0:
