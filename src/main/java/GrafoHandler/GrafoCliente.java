@@ -17,6 +17,7 @@ import GrafoThrift.Aresta;
 import GrafoThrift.GrafoHandler;
 import GrafoThrift.NotFoundEx;
 import GrafoThrift.Vertice;
+import java.util.ArrayList;
 
 /**
  *
@@ -64,6 +65,17 @@ public class GrafoCliente {
             	
             	menu = scan.nextInt();
             	scan.nextLine();
+            	
+            	int identificador;
+    			int identificador1;
+    			int cor;
+    			String descricao;
+    			int direcionada;
+    			double peso;
+    			Vertice v1;
+    			Vertice v2;
+    			Aresta a;
+    			
             	switch(menu){
             		case 1:
             			int menuAresta = 0;
@@ -86,42 +98,38 @@ public class GrafoCliente {
 	            			System.out.println("###########################################################");
 	            			
 	            			System.out.println();
-	            			int identificador;
-	            			int cor;
-	            			String descricao;
-	            			int peso;
-	            			Vertice v1;
-	            			Vertice v2;
+	            			
 	            			//Tipo de criação de arestas
 	            			switch(menuAresta){
-	            				//criar a partir de vértices existentes
-	            				case 1:
-	            					System.out.println("###########################################################");
-	    	            			System.out.println("#       Criar Aresta apartir de vértices existentes       #");
-	    	            			System.out.print("#  Informe o identificador do primeiro vértice: ");
-		    	            		identificador = scan.nextInt();
+                                //criar a partir de vértices existentes
+                            	case 1:
+                            		System.out.println("###########################################################");
+                                    System.out.println("#       Criar Aresta apartir de vértices existentes       #");
+                                    System.out.print("#  Informe o identificador do primeiro vértice: ");
+                                    identificador = scan.nextInt();
 		                            scan.nextLine();
 		                            try{
 		                            	v1 = client.buscaVertice(identificador);
+		                            	System.out.println("#  O vértice v1 eh: "+v1.toString());
 		                            	System.out.print("#  Informe o identificador do segundo vértice: ");
-				    	            	identificador = scan.nextInt();
+				    	            	identificador1 = scan.nextInt();
 				                        scan.nextLine();
-				                        v2 = client.buscaVertice(identificador);
-				                        
+				                        v2 = client.buscaVertice(identificador1);
+				                        System.out.println("#  O vértice v2 eh: "+v2.toString());
 				                        System.out.println("###########################################################");
 			                    		System.out.println("#              Dados complementares da Aresta             #");
 			                    			
 			                    		System.out.print("#  Informe o peso da Aresta: ");
-			                    		peso = scan.nextInt();
+			                    		peso = scan.nextDouble();
 			                            scan.nextLine();
 			                            	
 			                    		System.out.print("#  A aresta é direcionada? (1- Sim / 2- Não): ");
-			                    		int direcionada = scan.nextInt();
+			                    		direcionada = scan.nextInt();
 			                            scan.nextLine();
 			                            	
 			                            System.out.print("#  Informe a descrição da aresta: ");
 			                    		descricao = scan.nextLine();
-			                    		Aresta a;
+			                    		
 			                            if(direcionada == 1){
 			                            	a = new Aresta(v1,v2, peso, true, descricao);
 			                            	
@@ -139,89 +147,96 @@ public class GrafoCliente {
 		                            }catch(NotFoundEx e){
 		                            	System.out.println("#             		Vértice não encontrado                #");     
 		                            	System.out.println("###########################################################");
+		                            }catch(NumberFormatException e){
+		                            	System.out.println("#              Parâmetro informado errado                #");
+		                                System.out.println("##########################################################");
 		                            }
 		                            System.out.println();
 	    	            			break;
 	    	            			
 	    	            		//Criar a partir de vértices novos
 	            				case 2:
-	            					System.out.println("###########################################################");
-	                    			System.out.println("#               Criação do Primeiro Vértice               #");
-	                    			System.out.print("#  Informe o identificador do primeiro vértice: ");
-	                    			identificador = scan.nextInt();
-	                            	scan.nextLine();
-	                            	
-	                    			System.out.print("#  Informe a cor do primeiro vértice: ");
-	                    			cor = scan.nextInt();
-	                            	scan.nextLine();
-	                            	
-	                    			System.out.print("#  Informe a descrição do primeiro vértice: ");
-	                    			descricao = scan.nextLine();
-	                            	
-	                    			System.out.print("#  Informe o peso do primeiro vértice: ");
-	                    			peso = scan.nextInt();
-	                            	scan.nextLine();
-	                            	
-	                    			System.out.println("#               Fim Criação Primeiro Vértice              #");
-	                            	System.out.println("###########################################################");
-	                    			
-	                            	v1 = new Vertice(identificador,cor,descricao,peso);
-	                            	
-	                            	System.out.println();
-	        	
-	                    			System.out.println("###########################################################");
-	                    			System.out.println("#                Criação do Segundo Vértice               #");
-	                    			System.out.print("#  Informe o identificador do segundo vértice: ");
-	                    			identificador = scan.nextInt();
-	                            	scan.nextLine();
-	                            	
-	                    			System.out.print("#  Informe a cor do segundo vértice: ");
-	                    			cor = scan.nextInt();
-	                            	scan.nextLine();
-	                            	
-	                    			System.out.print("#  Informe a descrição do segundo vértice: ");
-	                    			descricao = scan.nextLine();
-	                            	
-	                    			System.out.print("#  Informe o peso do segundo vértice: ");
-	                    			peso = scan.nextInt();
-	                            	scan.nextLine();
-	                            	
-	                    			System.out.println("#               Fim Criação Segundo Vértice               #");
-	                            	System.out.println("###########################################################");
-	                    			
-	                            	v2 = new Vertice(identificador,cor,descricao,peso);
-	                            	
-	                            	System.out.println();
-	                            	
-	                            	System.out.println("###########################################################");
-	                    			System.out.println("#              Dados complementares da Aresta             #");
-	                    			
-	                    			System.out.print("#  Informe o peso da Aresta: ");
-	                    			peso = scan.nextInt();
-	                            	scan.nextLine();
-	                            	
-	                    			System.out.print("#  A aresta é direcionada? (1- Sim / 2- Não): ");
-	                    			int direcionada = scan.nextInt();
-	                            	scan.nextLine();
-	                            	
-	                            	System.out.print("#  Informe a descrição da aresta: ");
-	                    			descricao = scan.nextLine();
-	                    			Aresta a;
-	                            	if(direcionada == 1){
-	                            		a = new Aresta(v1,v2, peso, true, descricao);
-	                            	
-	                            	}else{
-	                            		a = new Aresta(v1,v2, peso, false, descricao);
-	                            	}
-	                            	if(client.addAresta(a)){
-	                            		System.out.println("#                Aresta criada com Sucesso                #");
+	            					try{
+	            						System.out.println("###########################################################");
+		                    			System.out.println("#               Criação do Primeiro Vértice               #");
+		                    			System.out.print("#  Informe o identificador do primeiro vértice: ");
+		                    			identificador = scan.nextInt();
+		                            	scan.nextLine();
+		                            	
+		                    			System.out.print("#  Informe a cor do primeiro vértice: ");
+		                    			cor = scan.nextInt();
+		                            	scan.nextLine();
+		                            	
+		                    			System.out.print("#  Informe a descrição do primeiro vértice: ");
+		                    			descricao = scan.nextLine();
+		                            	
+		                    			System.out.print("#  Informe o peso do primeiro vértice: ");
+		                    			peso = scan.nextDouble();
+		                            	scan.nextLine();
+		                            	
+		                    			System.out.println("#               Fim Criação Primeiro Vértice              #");
 		                            	System.out.println("###########################################################");
-	                            	}else{
-	                            		System.out.println("#                  Falha ao criar aresta                  #");
+		                    			
+		                            	v1 = new Vertice(identificador,cor,descricao,peso);
+		                            	
+		                            	System.out.println();
+		        	
+		                    			System.out.println("###########################################################");
+		                    			System.out.println("#                Criação do Segundo Vértice               #");
+		                    			System.out.print("#  Informe o identificador do segundo vértice: ");
+		                    			identificador = scan.nextInt();
+		                            	scan.nextLine();
+		                            	
+		                    			System.out.print("#  Informe a cor do segundo vértice: ");
+		                    			cor = scan.nextInt();
+		                            	scan.nextLine();
+		                            	
+		                    			System.out.print("#  Informe a descrição do segundo vértice: ");
+		                    			descricao = scan.nextLine();
+		                            	
+		                    			System.out.print("#  Informe o peso do segundo vértice: ");
+		                    			peso = scan.nextDouble();
+		                            	scan.nextLine();
+		                            	
+		                    			System.out.println("#               Fim Criação Segundo Vértice               #");
 		                            	System.out.println("###########################################################");
-	                            	}
-	                            	System.out.println();
-	                            	menuAresta = 3;
+		                    			
+		                            	v2 = new Vertice(identificador,cor,descricao,peso);
+		                            	
+		                            	System.out.println();
+		                            	
+		                            	System.out.println("###########################################################");
+		                    			System.out.println("#              Dados complementares da Aresta             #");
+		                    			
+		                    			System.out.print("#  Informe o peso da Aresta: ");
+		                    			peso = scan.nextInt();
+		                            	scan.nextLine();
+		                            	
+		                    			System.out.print("#  A aresta é direcionada? (1- Sim / 2- Não): ");
+		                    			direcionada = scan.nextInt();
+		                            	scan.nextLine();
+		                            	
+		                            	System.out.print("#  Informe a descrição da aresta: ");
+		                    			descricao = scan.nextLine();
+		                            	if(direcionada == 1){
+		                            		a = new Aresta(v1,v2, peso, true, descricao);
+		                            	
+		                            	}else{
+		                            		a = new Aresta(v1,v2, peso, false, descricao);
+		                            	}
+		                            	if(client.addAresta(a)){
+		                            		System.out.println("#                Aresta criada com Sucesso                #");
+			                            	System.out.println("###########################################################");
+		                            	}else{
+		                            		System.out.println("#                  Falha ao criar aresta                  #");
+			                            	System.out.println("###########################################################");
+		                            	}
+		                            	System.out.println();
+		                            	menuAresta = 3;
+	            					}catch(NumberFormatException e){
+		                            	System.out.println("#              Parâmetro informado errado                #");
+		                                System.out.println("##########################################################");
+		                            }
 	            					break;
 	            				case 3:
 	            					break;
@@ -231,34 +246,266 @@ public class GrafoCliente {
             			}	
             			break;
             		case 2:
+                        System.out.println("###########################################################");
+                        System.out.println("#                                                         #");
+                        System.out.println("#         Opção selecionada --> Buscar Aresta             #");
+                        System.out.println("#                                                         #");
+                        System.out.println("###########################################################");
+                        System.out.println();
+                        
+                        System.out.println("###########################################################");
+                        System.out.print("#  Informe os identificadores da aresta: ");
+                        identificador = scan.nextInt();
+                        identificador1 = scan.nextInt();
+                        scan.nextLine();
+                        
+                        try{
+                            a = client.buscaAresta(identificador,identificador1);                            
+                            if(a != null){
+                                System.out.println(a.toString());
+                            }
+                        }catch(NotFoundEx nfe){
+                            System.out.println("#                 Aresta não encontrado                  #");
+                            System.out.println("##########################################################");
+                        }catch(NumberFormatException e){
+                        	System.out.println("#              Parâmetro informado errado                #");
+                            System.out.println("##########################################################");
+                        }
             			break;
             		case 3:
+            			System.out.println("###########################################################");
+                        System.out.println("#                                                         #");
+                        System.out.println("#         Opção selecionada --> Atualizar Aresta          #");
+                        System.out.println("#                                                         #");
+                        System.out.println("###########################################################");
+                        System.out.println();
+                        
+                        System.out.println("###########################################################");
+                        System.out.print("#  Informe os identificadores da aresta: ");
+                        identificador = scan.nextInt();
+                        identificador1 = scan.nextInt();
+                        scan.nextLine();
+                        try{
+                            a = client.buscaAresta(identificador,identificador1);
+                            
+                            if(a != null){
+                                System.out.print("#  Informe se a nova aresta é direcionada (1- Sim / 2- Não): ");
+                                direcionada = scan.nextInt();
+                                scan.nextLine();
+
+                                System.out.print("#  Informe o novo peso da aresta: ");
+                                peso = scan.nextDouble();
+                                scan.nextLine();
+
+                                System.out.print("#  Informe a nova descrição da aresta: ");
+                                descricao = scan.nextLine();
+                                
+                                if(direcionada == 1){
+                                	a.setDirecionada(true);
+                                }else{
+                                	a.setDirecionada(false);
+                                }
+                                a.setDescricao(descricao);
+                                a.setPeso(peso);
+                                
+                                if(client.atualizaAresta(a)){
+                                    System.out.println("#             Aresta atualizado com sucesso               #");
+                                    System.out.println("###########################################################");
+                                }else{
+                                    System.out.println("#               Falha ao atualizar Aresta                 #");
+                                    System.out.println("###########################################################");
+                                }
+                                System.out.println();
+                            }
+                        }catch(NotFoundEx nfe){
+                            System.out.println("#                 Aresta não encontrado                   #");
+                            System.out.println("###########################################################");
+                        }catch(NumberFormatException e){
+                        	System.out.println("#              Parâmetro informado errado                #");
+                            System.out.println("##########################################################");
+                        }
             			break;
+                                
             		case 4:
-            			break;
-            		case 5:
-            			break;
-            		case 6:
-            			break;
+            			System.out.println("###########################################################");
+                        System.out.println("#                                                         #");
+                        System.out.println("#         Opção selecionada --> Listar arestas            #");
+                        System.out.println("#                                                         #");
+                        System.out.println("###########################################################");
+                        System.out.println();
+                        
+                        try{
+                            ArrayList<Aresta> arestas = (ArrayList<Aresta>)client.listarArestas();                            
+                            for(Aresta at:arestas)
+                                System.out.println(at.toString());
+
+                            System.out.println();
+                        }
+                        catch(NotFoundEx nfe){
+                            System.out.println("#             Não existem arestas cadastradas             #");
+                            System.out.println("###########################################################");                    
+                        }
+                	   break;
+                                
+            		case 5:                            
+                            System.out.println("###########################################################");
+                            System.out.println("#                                                         #");
+                            System.out.println("#         Opção selecionada --> Adicionar Vértice         #");
+                            System.out.println("#                                                         #");
+                            System.out.println("###########################################################");
+                            System.out.println();
+                            
+                            System.out.println("###########################################################");
+                            System.out.print("#  Informe o identificador do vértice: ");
+                            identificador = scan.nextInt();
+                            scan.nextLine();
+                           
+                            System.out.print("#  Informe a cor do vértice: ");
+                            cor = scan.nextInt();
+                            scan.nextLine();
+                            
+                            System.out.print("#  Informe o peso do vértice: ");
+                            peso = scan.nextDouble();
+                            scan.nextLine();
+                            
+                            System.out.print("#  Informe a descrição do vértice: ");
+                            descricao = scan.nextLine();
+                            
+                            Vertice v = new Vertice(identificador, cor, descricao, peso);
+                            
+                            if(client.addVertice(v)){
+                                    System.out.println("#                Vértice criado com sucesso               #");
+                                    System.out.println("###########################################################");
+                            }else{
+                                    System.out.println("#                 Falha ao criar Vértice                  #");
+                                    System.out.println("###########################################################");
+                            }
+                            System.out.println();
+
+                            
+                            break;
+            		case 6:                                
+                            System.out.println("###########################################################");
+                            System.out.println("#                                                         #");
+                            System.out.println("#         Opção selecionada --> Buscar Vértice            #");
+                            System.out.println("#                                                         #");
+                            System.out.println("###########################################################");
+                            System.out.println();
+                            
+                            System.out.println("###########################################################");
+                            System.out.print("#  Informe o identificador do vértice: ");
+                            identificador = scan.nextInt();
+                            scan.nextLine();
+                            
+                            try{
+                                v = client.buscaVertice(identificador);
+                                
+                                if(v != null){
+                                    System.out.println(v.toString());
+                                }
+                            }catch(NotFoundEx nfe){
+                                System.out.println("#                 Vértice não encontrado                  #");
+                                System.out.println("###########################################################");
+                            }
+                            
+            			break;            		
             		case 7:
-            			break;
+                            System.out.println("###########################################################");
+                            System.out.println("#                                                         #");
+                            System.out.println("#         Opção selecionada --> Atualizar Vértice         #");
+                            System.out.println("#                                                         #");
+                            System.out.println("###########################################################");
+                            System.out.println();
+                            
+                            System.out.println("###########################################################");
+                            System.out.print("#  Informe o identificador do vértice: ");
+                            identificador = scan.nextInt();
+                            scan.nextLine();
+                            
+                            try{
+                                v = client.buscaVertice(identificador);
+                                
+                                if(v != null){
+                                    System.out.print("#  Informe a nova cor do vértice: ");
+                                    cor = scan.nextInt();
+                                    scan.nextLine();
+
+                                    System.out.print("#  Informe o novo peso do vértice: ");
+                                    peso = scan.nextDouble();
+                                    scan.nextLine();
+
+                                    System.out.print("#  Informe a nova descrição do vértice: ");
+                                    descricao = scan.nextLine();
+                                    
+                                    v.setCor(cor);
+                                    v.setDescricao(descricao);
+                                    v.setPeso(peso);
+                                    
+                                    if(client.atualizaVertice(v)){
+                                        System.out.println("#             Vértice atualizado com sucesso              #");
+                                        System.out.println("###########################################################");
+                                    }else{
+                                        System.out.println("#               Falha ao atualizar Vértice                #");
+                                        System.out.println("###########################################################");
+                                    }
+                                    System.out.println();
+                                }
+                            }catch(NotFoundEx nfe){
+                                System.out.println("#                 Vértice não encontrado                  #");
+                                System.out.println("###########################################################");
+                            }
+                           
+                            break;
             		case 8:
-            			break;
+                            System.out.println("###########################################################");
+                            System.out.println("#                                                         #");
+                            System.out.println("#         Opção selecionada --> Excluir Vértice           #");
+                            System.out.println("#                                                         #");
+                            System.out.println("###########################################################");
+                            System.out.println();
+                            
+                            System.out.println("###########################################################");
+                            System.out.print("#  Informe o identificador do vértice: ");
+                            identificador = scan.nextInt();
+                            scan.nextLine();
+                                                        
+                            if(!client.excluiVertice(identificador)){
+                                System.out.println("#            Não foi possível excluir o vértice           #");
+                                System.out.println("###########################################################");
+                            }else{
+                                System.out.println("#              Vértice excluído com sucesso               #");
+                                System.out.println("###########################################################");
+                            }
+
+                            break;
             		case 9:
-            			break;
+                            System.out.println("###########################################################");
+                            System.out.println("#                                                         #");
+                            System.out.println("#         Opção selecionada --> Listar vértices           #");
+                            System.out.println("#                                                         #");
+                            System.out.println("###########################################################");
+                            System.out.println();
+                            
+                            try{
+                                ArrayList<Vertice> vertices = (ArrayList<Vertice>)client.listarVertices();                            
+                                for(Vertice vt:vertices)
+                                    System.out.println(vt.toString());
+
+                                System.out.println();
+                            }
+                            catch(NotFoundEx nfe){
+                                System.out.println("#             Não existem vértices cadastrados            #");
+                                System.out.println("###########################################################");                    
+                            }
+                            break;
             		case 0:
             			break;
             		default:
             			break;
             			
-            	}
-            	
-           }
-            Vertice v1 = new Vertice(1, 1, "Marcelo", 1);
-
-            client.addVertice(v1);
-            System.out.println(client.buscaVertice(1).toString());
-
+            	}            	
+            }
+            scan.close();
             transport.close();
         } catch (TException x) {
             x.printStackTrace();
