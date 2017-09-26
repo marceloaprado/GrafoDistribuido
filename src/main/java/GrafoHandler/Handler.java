@@ -30,15 +30,16 @@ public class Handler implements GrafoHandler.Iface{
     HashMap<Identificador, Aresta> A = new HashMap<>();
     
     Grafo grafo = new Grafo(V, A);
+    AtomicBoolean emUso = new AtomicBoolean(false); 
     
     @Override
     public boolean addAresta(Aresta a) throws TException {
-        if(a.getV1() != a.getV2() && V.containsKey(a.getV1().getNome()) && V.containsKey(a.getV2().getNome())){
+        if(a.getV1().getNome() != a.getV2().getNome() && V.containsKey(a.getV1().getNome()) && V.containsKey(a.getV2().getNome())){
             IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, true,  A.size());
             IdentificadorAresta ida1 = new IdentificadorAresta(a.getV2().nome, a.getV1().nome, true, A.size());
             IdentificadorAresta ida2 = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, false, A.size());
             
-            AtomicBoolean emUso = new AtomicBoolean(false); 
+            
             boolean ok = false;        
             
             if(emUso.compareAndSet(false,true)){ //regiao critica                
@@ -88,8 +89,7 @@ public class Handler implements GrafoHandler.Iface{
 
     @Override
     public boolean atualizaAresta(Aresta a) throws TException {
-        IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, a.isDirecionada(), A.size());
-        AtomicBoolean emUso = new AtomicBoolean(false); 
+        IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, a.isDirecionada(), A.size());        
         boolean ok = false;
         if(emUso.compareAndSet(false,true)){ 
             //regiao critica            
@@ -108,8 +108,7 @@ public class Handler implements GrafoHandler.Iface{
     }
 
     @Override
-    public boolean addVertice(Vertice v) throws TException {
-        AtomicBoolean emUso = new AtomicBoolean(false); 
+    public boolean addVertice(Vertice v) throws TException {        
         boolean ok = false;
         if(emUso.compareAndSet(false,true)){ 
             //regiao critica
@@ -124,8 +123,7 @@ public class Handler implements GrafoHandler.Iface{
     }
 
     @Override
-    public boolean atualizaVertice(Vertice v) throws TException {        
-        AtomicBoolean emUso = new AtomicBoolean(false); 
+    public boolean atualizaVertice(Vertice v) throws TException {                
         boolean ok = false;
         if(emUso.compareAndSet(false,true)){ 
             //regiao critica            
@@ -144,8 +142,7 @@ public class Handler implements GrafoHandler.Iface{
     }
 
     @Override
-    public boolean excluiVertice(int id) throws TException {
-        AtomicBoolean emUso = new AtomicBoolean(false); 
+    public boolean excluiVertice(int id) throws TException {        
         boolean ok = false;
         if(emUso.compareAndSet(false,true)){ 
             //regiao critica            
@@ -180,10 +177,10 @@ public class Handler implements GrafoHandler.Iface{
     }
 
     @Override
-    public List<Vertice> listarVertices() throws NotFoundEx, TException {
+    public List<Vertice> listarVertices() throws NotFoundEx, TException {       
         if(!V.isEmpty())           
             return new ArrayList(V.values());      
-            
+
         throw new NotFoundEx();
     }
 
