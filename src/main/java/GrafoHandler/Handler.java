@@ -169,10 +169,10 @@ public class Handler implements GrafoHandler.Iface{
                 
                 //Remove as chaves
                 for(Identificador i:arRemovidas)
-                    A.remove(i);                    
+                    A.remove(i); 
+                V.remove(vt.nome);
+                ok = true;
             }
-            else
-                ok = false;
             emUso.set(false); 
             return ok;
         }
