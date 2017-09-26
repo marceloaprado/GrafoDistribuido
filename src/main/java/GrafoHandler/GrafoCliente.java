@@ -381,13 +381,19 @@ public class GrafoCliente {
                             System.out.println("#                                                         #");
                             System.out.println("###########################################################");
                             System.out.println();
-                            //ArrayList<Vertice> vertices = (ArrayList<Vertice>)client.listarVertices();
-                            client.listarVertices();
-                            //for(Vertice vt:vertices)
-                              //  System.out.println(vt.toString());
                             
-                            System.out.println();
-            			break;
+                            try{
+                                ArrayList<Vertice> vertices = (ArrayList<Vertice>)client.listarVertices();                            
+                                for(Vertice vt:vertices)
+                                    System.out.println(vt.toString());
+
+                                System.out.println();
+                            }
+                            catch(NotFoundEx nfe){
+                                System.out.println("#             Não existem vértices cadastrados            #");
+                                System.out.println("###########################################################");                    
+                            }
+                            break;
             		case 0:
             			break;
             		default:

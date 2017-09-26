@@ -180,12 +180,18 @@ public class Handler implements GrafoHandler.Iface{
     }
 
     @Override
-    public List<Vertice> listarVertices() throws TException {
-        return (List<Vertice>)V.values();        
+    public List<Vertice> listarVertices() throws NotFoundEx, TException {
+        if(!V.isEmpty())           
+            return new ArrayList(V.values());      
+            
+        throw new NotFoundEx();
     }
 
     @Override
-    public List<Aresta> listarArestas() throws TException {
-        return (List<Aresta>)A.values();
+    public List<Aresta> listarArestas() throws NotFoundEx, TException {
+        if(!A.isEmpty())
+            return new ArrayList(A.values());
+        
+        throw new NotFoundEx();
     }
 }
