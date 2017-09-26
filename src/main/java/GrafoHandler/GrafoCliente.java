@@ -95,12 +95,12 @@ public class GrafoCliente {
 	            			Vertice v2;
 	            			//Tipo de criação de arestas
 	            			switch(menuAresta){
-	            				//criar a partir de vértices existentes
-	            				case 1:
-	            					System.out.println("###########################################################");
-	    	            			System.out.println("#       Criar Aresta apartir de vértices existentes       #");
-	    	            			System.out.print("#  Informe o identificador do primeiro vértice: ");
-		    	            		identificador = scan.nextInt();
+                                            //criar a partir de vértices existentes
+                                            case 1:
+                                            System.out.println("###########################################################");
+                                            System.out.println("#       Criar Aresta apartir de vértices existentes       #");
+                                            System.out.print("#  Informe o identificador do primeiro vértice: ");
+                                            identificador = scan.nextInt();
 		                            scan.nextLine();
 		                            try{
 		                            	v1 = client.buscaVertice(identificador);
@@ -235,48 +235,166 @@ public class GrafoCliente {
             			break;
             		case 3:
             			break;
-            		case 4:
-                            Vertice v = new Vertice(1,1,"marcelo", 1);
-                            client.addVertice(v);
-                            Vertice v1 = new Vertice(2,1,"rhaniel", 1);
-                            client.addVertice(v1);
-                            
-                            Aresta a = new Aresta(v, v1, 3, false, "amigo");
-                            client.addAresta(a);
-                            
-                            Aresta a1 = client.buscaAresta(1, 2);
-                            if(a1 != null)
-                                System.out.println(a1.toString());
-                            
-                            /*
-                            ArrayList<Aresta> a = (ArrayList<Aresta>)client.listarArestas();
-                            
-                            for(Aresta a1: a)
-                                System.out.println(a.toString());
-            			*/break;
+                                
+                        case 4:
+                            break;
+                                
             		case 5:
-            			break;
-            		case 6:
-            			break;
+                            int nome, cor;
+                            double peso;
+                            String descricao;
+                            
+                            System.out.println("###########################################################");
+                            System.out.println("#                                                         #");
+                            System.out.println("#         Opção selecionada --> Adicionar Vértice         #");
+                            System.out.println("#                                                         #");
+                            System.out.println("###########################################################");
+                            System.out.println();
+                            
+                            System.out.println("###########################################################");
+                            System.out.print("#  Informe o identificador do vértice: ");
+                            nome = scan.nextInt();
+                            scan.nextLine();
+                           
+                            System.out.print("#  Informe a cor do vértice: ");
+                            cor = scan.nextInt();
+                            scan.nextLine();
+                            
+                            System.out.print("#  Informe o peso do vértice: ");
+                            peso = scan.nextDouble();
+                            scan.nextLine();
+                            
+                            System.out.print("#  Informe a descrição do vértice: ");
+                            descricao = scan.nextLine();
+                            
+                            Vertice v = new Vertice(nome, cor, descricao, peso);
+                            
+                            if(client.addVertice(v)){
+                                    System.out.println("#                Vértice criado com sucesso               #");
+                                    System.out.println("###########################################################");
+                            }else{
+                                    System.out.println("#                 Falha ao criar Vértice                  #");
+                                    System.out.println("###########################################################");
+                            }
+                            System.out.println();
+
+                            
+                            break;
+            		case 6:                                
+                            System.out.println("###########################################################");
+                            System.out.println("#                                                         #");
+                            System.out.println("#         Opção selecionada --> Buscar Vértice            #");
+                            System.out.println("#                                                         #");
+                            System.out.println("###########################################################");
+                            System.out.println();
+                            
+                            System.out.println("###########################################################");
+                            System.out.print("#  Informe o identificador do vértice: ");
+                            nome = scan.nextInt();
+                            scan.nextLine();
+                            
+                            try{
+                                v = client.buscaVertice(nome);
+                                
+                                if(v != null){
+                                    System.out.println(v.toString());
+                                }
+                            }catch(NotFoundEx nfe){
+                                System.out.println("#                 Vértice não encontrado                  #");
+                                System.out.println("###########################################################");
+                            }
+                            
+            			break;            		
             		case 7:
-            			break;
+                            System.out.println("###########################################################");
+                            System.out.println("#                                                         #");
+                            System.out.println("#         Opção selecionada --> Atualizar Vértice         #");
+                            System.out.println("#                                                         #");
+                            System.out.println("###########################################################");
+                            System.out.println();
+                            
+                            System.out.println("###########################################################");
+                            System.out.print("#  Informe o identificador do vértice: ");
+                            nome = scan.nextInt();
+                            scan.nextLine();
+                            
+                            try{
+                                v = client.buscaVertice(nome);
+                                
+                                if(v != null){
+                                    System.out.print("#  Informe a nova cor do vértice: ");
+                                    cor = scan.nextInt();
+                                    scan.nextLine();
+
+                                    System.out.print("#  Informe o novo peso do vértice: ");
+                                    peso = scan.nextDouble();
+                                    scan.nextLine();
+
+                                    System.out.print("#  Informe a nova descrição do vértice: ");
+                                    descricao = scan.nextLine();
+                                    
+                                    v.setCor(cor);
+                                    v.setDescricao(descricao);
+                                    v.setPeso(peso);
+                                    
+                                    if(client.atualizaVertice(v)){
+                                        System.out.println("#             Vértice atualizado com sucesso              #");
+                                        System.out.println("###########################################################");
+                                    }else{
+                                        System.out.println("#               Falha ao atualizar Vértice                #");
+                                        System.out.println("###########################################################");
+                                    }
+                                    System.out.println();
+                                }
+                            }catch(NotFoundEx nfe){
+                                System.out.println("#                 Vértice não encontrado                  #");
+                                System.out.println("###########################################################");
+                            }
+                           
+                            break;
             		case 8:
-            			break;
+                            System.out.println("###########################################################");
+                            System.out.println("#                                                         #");
+                            System.out.println("#         Opção selecionada --> Excluir Vértice           #");
+                            System.out.println("#                                                         #");
+                            System.out.println("###########################################################");
+                            System.out.println();
+                            
+                            System.out.println("###########################################################");
+                            System.out.print("#  Informe o identificador do vértice: ");
+                            nome = scan.nextInt();
+                            scan.nextLine();
+                                                        
+                            if(!client.excluiVertice(nome)){
+                                System.out.println("#            Não foi possível excluir o vértice           #");
+                                System.out.println("###########################################################");
+                            }else{
+                                System.out.println("#              Vértice excluído com sucesso               #");
+                                System.out.println("###########################################################");
+                            }
+
+                            break;
             		case 9:
+                            System.out.println("###########################################################");
+                            System.out.println("#                                                         #");
+                            System.out.println("#         Opção selecionada --> Listar vértices           #");
+                            System.out.println("#                                                         #");
+                            System.out.println("###########################################################");
+                            System.out.println();
+                            //ArrayList<Vertice> vertices = (ArrayList<Vertice>)client.listarVertices();
+                            client.listarVertices();
+                            //for(Vertice vt:vertices)
+                              //  System.out.println(vt.toString());
+                            
+                            System.out.println();
             			break;
             		case 0:
             			break;
             		default:
             			break;
             			
-            	}
-            	
-           }
-            Vertice v1 = new Vertice(1, 1, "Marcelo", 1);
-
-            client.addVertice(v1);
-            System.out.println(client.buscaVertice(1).toString());
-
+            	}            	
+            }
             transport.close();
         } catch (TException x) {
             x.printStackTrace();
