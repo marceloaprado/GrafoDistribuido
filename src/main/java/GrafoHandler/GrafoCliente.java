@@ -202,6 +202,8 @@ public class GrafoCliente {
 		                            	System.out.println("###########################################################");
 		                    			
 		                            	v2 = new Vertice(identificador,cor,descricao,peso);
+		                            	client.addVertice(v2);
+		                            	client.addVertice(v1);
 		                            	
 		                            	System.out.println();
 		                            	
