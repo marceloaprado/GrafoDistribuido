@@ -17,6 +17,7 @@ import GrafoThrift.Aresta;
 import GrafoThrift.GrafoHandler;
 import GrafoThrift.NotFoundEx;
 import GrafoThrift.Vertice;
+import java.util.ArrayList;
 
 /**
  *
@@ -235,7 +236,24 @@ public class GrafoCliente {
             		case 3:
             			break;
             		case 4:
-            			break;
+                            Vertice v = new Vertice(1,1,"marcelo", 1);
+                            client.addVertice(v);
+                            Vertice v1 = new Vertice(2,1,"rhaniel", 1);
+                            client.addVertice(v1);
+                            
+                            Aresta a = new Aresta(v, v1, 3, false, "amigo");
+                            client.addAresta(a);
+                            
+                            Aresta a1 = client.buscaAresta(1, 2);
+                            if(a1 != null)
+                                System.out.println(a1.toString());
+                            
+                            /*
+                            ArrayList<Aresta> a = (ArrayList<Aresta>)client.listarArestas();
+                            
+                            for(Aresta a1: a)
+                                System.out.println(a.toString());
+            			*/break;
             		case 5:
             			break;
             		case 6:

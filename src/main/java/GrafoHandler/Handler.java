@@ -33,7 +33,7 @@ public class Handler implements GrafoHandler.Iface{
     
     @Override
     public boolean addAresta(Aresta a) throws TException {
-        if(a.getV1() != a.getV2()){
+        if(a.getV1() != a.getV2() && V.containsKey(a.getV1().getNome()) && V.containsKey(a.getV2().getNome())){
             IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, true,  A.size());
             IdentificadorAresta ida1 = new IdentificadorAresta(a.getV2().nome, a.getV1().nome, true, A.size());
             IdentificadorAresta ida2 = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, false, A.size());
@@ -68,7 +68,7 @@ public class Handler implements GrafoHandler.Iface{
         if(a != null)
             return a;
         else{
-            ida.isDirecionada = false;
+            ida.setDirecionada(false);
             a = A.get(ida);
             if(a != null)
                 return a;
