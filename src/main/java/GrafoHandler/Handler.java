@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.thrift.TException;
 
@@ -26,8 +27,8 @@ import org.apache.thrift.TException;
  * @author MarceloPrado, Rhaniel Cristhian
  */
 public class Handler implements GrafoHandler.Iface{
-    HashMap<Integer, Vertice> V = new HashMap<>();
-    HashMap<Identificador, Aresta> A = new HashMap<>();
+    ConcurrentHashMap<Integer, Vertice> V = new ConcurrentHashMap<>();
+    ConcurrentHashMap<Identificador, Aresta> A = new ConcurrentHashMap<>();
     
     Grafo grafo = new Grafo(V, A);
     AtomicBoolean emUso = new AtomicBoolean(false); 
@@ -37,21 +38,20 @@ public class Handler implements GrafoHandler.Iface{
         if(a.getV1().getNome() != a.getV2().getNome() && V.containsKey(a.getV1().getNome()) && V.containsKey(a.getV2().getNome())){
             IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, true,  A.size());
             IdentificadorAresta ida1 = new IdentificadorAresta(a.getV2().nome, a.getV1().nome, true, A.size());
-            IdentificadorAresta ida2 = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, false, A.size());
-            
+            IdentificadorAresta ida2 = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, false, A.size());            
             
             boolean ok = false;        
             
             if(emUso.compareAndSet(false,true)){ //regiao critica                
                 if(!a.isDirecionada()){ //se não for direcionada, verificar se existe alguma direcionada e não direcionada que entra em conflito
                     if(!A.containsKey(ida) && !A.containsKey(ida1) && !A.containsKey(ida2)){
-                        A.put(ida2, a);
+                        A.putIfAbsent(ida2, a);
                         ok = true;
                     }
                 }
                 else{//se for direcionada, procurar alguma direcionada ou não direcionada que entre em conflito                    
                     if(!A.containsKey(ida) && !A.containsKey(ida2)){
-                        A.put(ida, a);
+                        A.putIfAbsent(ida, a);
                         ok = true;
                     }
                 }
@@ -108,39 +108,37 @@ public class Handler implements GrafoHandler.Iface{
     }
 
     @Override
-    public boolean addVertice(Vertice v) throws TException {        
-        boolean ok = false;
-        if(emUso.compareAndSet(false,true)){ 
-            //regiao critica
-            if(!V.containsKey(v.nome)){
-                V.put(v.nome, v);
-                ok = true;
-            }
-            emUso.set(false); 
-            return ok;
+    public boolean addVertice(Vertice v) throws TException {   
+        if(v.getNome() >= 0 && v.getPeso() >= 0){
+            V.putIfAbsent(v.nome, v);
+            return true;
         }
         return false;
     }
 
     @Override
-    public boolean atualizaVertice(Vertice v) throws TException {                
-        boolean ok = false;
-        if(emUso.compareAndSet(false,true)){ 
-            //regiao critica            
-            Vertice vt = V.get(v.getNome());
-            
-            if(vt != null){
-                V.replace(vt.nome, v);
-                ok = true;
+    public boolean atualizaVertice(Vertice v) throws TException {                             
+        Vertice vt = V.get(v.getNome());
+
+        if(vt != null){
+            synchronized(vt){
+                V.replace(vt.nome, vt, v);
+                return true;
             }
-            else
-                ok = false;
-            emUso.set(false); 
-            return ok;
         }
+        
         return false;
     }
-
+    
+    @Override
+    public boolean excluiAresta(int v1, int v2, int direcionada) throws TException {
+        Aresta a = buscaAresta(v1, v2);
+        synchronized(a){
+            //A.re
+            return true;
+        }        
+    }
+    
     @Override
     public boolean excluiVertice(int id) throws TException {        
         boolean ok = false;
@@ -191,4 +189,15 @@ public class Handler implements GrafoHandler.Iface{
         
         throw new NotFoundEx();
     }
+
+    @Override
+    public List<Aresta> arestasDoVertice(int nome) throws NotFoundEx, TException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Vertice> vizinhos(int nome) throws NotFoundEx, TException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+  
 }
