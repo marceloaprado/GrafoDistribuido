@@ -53,13 +53,16 @@ public class GrafoCliente {
             	System.out.println("2) Busca Aresta");
             	System.out.println("3) Atualiza Aresta");
             	System.out.println("4) Lista Arestas");
+            	System.out.println("6) Excluir Aresta");
+            	System.out.println("7) Listar Arestas de um vértice");
             	
             	//Operações relacionadas aos Vértices
-            	System.out.println("5) Adicionar Vértice");
-            	System.out.println("6) Busca Vértice");
-            	System.out.println("7) Atualiza Vértice");
-            	System.out.println("8) Exclui Vértice");
-            	System.out.println("9) Lista Vértices");
+            	System.out.println("8) Adicionar Vértice");
+            	System.out.println("9) Busca Vértice");
+            	System.out.println("10) Atualiza Vértice");
+            	System.out.println("11) Exclui Vértice");
+            	System.out.println("12) Lista Vértices");
+            	System.out.println("13) Lista os vizinhos de um vértice");
             	
             	//Sair
             	System.out.println("0) Sair");
@@ -349,8 +352,45 @@ public class GrafoCliente {
                             System.out.println("###########################################################");                    
                         }
                 	   break;
-                                
-            		case 5:                            
+            		case 5:
+            			System.out.println("###########################################################");
+                        System.out.println("#                                                         #");
+                        System.out.println("#         Opção selecionada --> Excluir Aresta            #");
+                        System.out.println("#                                                         #");
+                        System.out.println("###########################################################");
+                        System.out.println();
+                        try{
+                        	System.out.println("###########################################################");
+                            System.out.print("#  Informe os identificadores da aresta: ");
+                            identificador = scan.nextInt();
+	                        identificador1 = scan.nextInt();
+	                        scan.nextLine();
+	                        
+	                        System.out.print("#  Informe se a aresta eh direcionada (1- Sim / 2- Não): ");
+	                        direcionada = scan.nextInt();
+	                        scan.nextLine();
+
+                            if(!client.excluiAresta(identificador,identificador1,direcionada)){
+                                System.out.println("#            Não foi possível excluir a aresta            #");
+                                System.out.println("###########################################################");
+                            }else{
+                                System.out.println("#              Aresta excluída com sucesso                #");
+                                System.out.println("###########################################################");
+                            }
+
+                        }catch(NotFoundEx nfe){
+                            System.out.println("#                 Vértice não encontrado                  #");
+                            System.out.println("###########################################################");
+                        }catch(InputMismatchException e){
+                        	System.out.println("#              Parâmetro informado errado                #");
+                            System.out.println("##########################################################");
+                        }
+            			break;
+            		case 6:
+            			break;
+            		case 7:
+            			break;
+            		case 8:                            
                             System.out.println("###########################################################");
                             System.out.println("#                                                         #");
                             System.out.println("#         Opção selecionada --> Adicionar Vértice         #");
@@ -392,7 +432,7 @@ public class GrafoCliente {
 
                             
                             break;
-            		case 6:                                
+            		case 9:                                
                             System.out.println("###########################################################");
                             System.out.println("#                                                         #");
                             System.out.println("#         Opção selecionada --> Buscar Vértice            #");
@@ -419,7 +459,7 @@ public class GrafoCliente {
                             }
                             
             			break;            		
-            		case 7:
+            		case 10:
                             System.out.println("###########################################################");
                             System.out.println("#                                                         #");
                             System.out.println("#         Opção selecionada --> Atualizar Vértice         #");
@@ -469,7 +509,7 @@ public class GrafoCliente {
                                 System.out.println("##########################################################");
                             }
                             break;
-            		case 8:
+            		case 11:
                             System.out.println("###########################################################");
                             System.out.println("#                                                         #");
                             System.out.println("#         Opção selecionada --> Excluir Vértice           #");
@@ -498,7 +538,7 @@ public class GrafoCliente {
                                 System.out.println("##########################################################");
                             }
                             break;
-            		case 9:
+            		case 12:
                             System.out.println("###########################################################");
                             System.out.println("#                                                         #");
                             System.out.println("#         Opção selecionada --> Listar vértices           #");
@@ -521,6 +561,8 @@ public class GrafoCliente {
                                 System.out.println("##########################################################");
                             }
                             break;
+            		case 13:
+            			break;
             		case 0:
             			break;
             		default:
