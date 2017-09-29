@@ -677,11 +677,20 @@ public class GrafoCliente {
 						//OPERAÇÕES COM ARESTAS
 						
 						//ADICIONAR ARESTAS
-						System.out.println("#  Tentando Atualizar um vértice que não existe");
-						Aresta ar = new Aresta(vet, vet1, 2, false, "teste");
-						client.addAresta(ar);
-						Aresta ar1 = new Aresta(vet1, vet2, 3, true, "teste1");
-						client.addAresta(ar1);
+						System.out.println("#  Adicionando 3 artestas novas");
+						Aresta ar = new Aresta(vet, vet1, 2, false, "a1");
+						Aresta ar1 = new Aresta(vet1, vet2, 3, true, "a2");
+						Aresta ar2 = new Aresta(vet2, vet3, 4, true, "a3");
+
+						if(client.addAresta(ar2) && client.addAresta(ar1) && client.addAresta(ar)){
+							listaArestas(client);
+						}
+						System.out.println("#  Tentando adicionar aresta repetida");
+						if(!client.addAresta(ar2)) {
+							System.out.println("#  Falha ao adicionar aresta");
+						}
+						
+						//
 						
 					}catch(Exception e){
 						
