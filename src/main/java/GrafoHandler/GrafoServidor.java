@@ -17,9 +17,11 @@ import org.apache.thrift.transport.TServerTransport;
  */
 public class GrafoServidor {
     public static Handler handler;
-    public static GrafoHandler.Processor processor;
+    @SuppressWarnings("rawtypes")
+	public static GrafoHandler.Processor processor;
     
-    public static void main(String args[]){
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void main(String args[]){
         try{
             handler = new Handler();
             processor = new GrafoHandler.Processor(handler);
