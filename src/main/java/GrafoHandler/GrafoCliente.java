@@ -19,6 +19,7 @@ import GrafoThrift.Aresta;
 import GrafoThrift.GrafoHandler;
 import GrafoThrift.NotFoundEx;
 import GrafoThrift.Vertice;
+import java.util.Locale;
 
 /**
  *
@@ -38,7 +39,7 @@ public class GrafoCliente {
             
             int menu = 1;
             Scanner scan = new Scanner(System.in);
-            
+            scan.useLocale(Locale.US);
             //Menu do usuário
             while(menu != 0){
             	System.out.println("######################################################");
@@ -53,16 +54,16 @@ public class GrafoCliente {
             	System.out.println("2) Busca Aresta");
             	System.out.println("3) Atualiza Aresta");
             	System.out.println("4) Lista Arestas");
-            	System.out.println("6) Excluir Aresta");
-            	System.out.println("7) Listar Arestas de um vértice");
+            	System.out.println("5) Excluir Aresta");
+            	System.out.println("6) Listar Arestas de um vértice");
             	
             	//Operações relacionadas aos Vértices
-            	System.out.println("8) Adicionar Vértice");
-            	System.out.println("9) Busca Vértice");
-            	System.out.println("10) Atualiza Vértice");
-            	System.out.println("11) Exclui Vértice");
-            	System.out.println("12) Lista Vértices");
-            	System.out.println("13) Lista os vizinhos de um vértice");
+            	System.out.println("7) Adicionar Vértice");
+            	System.out.println("8) Busca Vértice");
+            	System.out.println("9) Atualiza Vértice");
+            	System.out.println("10) Exclui Vértice");
+            	System.out.println("11) Lista Vértices");
+            	System.out.println("12) Lista os vizinhos de um vértice");
             	
             	//Sair
             	System.out.println("0) Sair");
@@ -215,7 +216,7 @@ public class GrafoCliente {
 		                    			System.out.println("#              Dados complementares da Aresta             #");
 		                    			
 		                    			System.out.print("#  Informe o peso da Aresta: ");
-		                    			peso = scan.nextInt();
+		                    			peso = scan.nextDouble();
 		                            	scan.nextLine();
 		                            	
 		                    			System.out.print("#  A aresta é direcionada? (1- Sim / 2- Não): ");
@@ -294,11 +295,7 @@ public class GrafoCliente {
                         
                             a = client.buscaAresta(identificador,identificador1);
                             
-                            if(a != null){
-                                System.out.print("#  Informe se a nova aresta é direcionada (1- Sim / 2- Não): ");
-                                direcionada = scan.nextInt();
-                                scan.nextLine();
-
+                            if(a != null){                                
                                 System.out.print("#  Informe o novo peso da aresta: ");
                                 peso = scan.nextDouble();
                                 scan.nextLine();
@@ -306,11 +303,6 @@ public class GrafoCliente {
                                 System.out.print("#  Informe a nova descrição da aresta: ");
                                 descricao = scan.nextLine();
                                 
-                                if(direcionada == 1){
-                                	a.setDirecionada(true);
-                                }else{
-                                	a.setDirecionada(false);
-                                }
                                 a.setDescricao(descricao);
                                 a.setPeso(peso);
                                 
@@ -366,11 +358,7 @@ public class GrafoCliente {
 	                        identificador1 = scan.nextInt();
 	                        scan.nextLine();
 	                        
-	                        System.out.print("#  Informe se a aresta eh direcionada (1- Sim / 2- Não): ");
-	                        direcionada = scan.nextInt();
-	                        scan.nextLine();
-
-                            if(!client.excluiAresta(identificador,identificador1,direcionada)){
+                            if(!client.excluiAresta(identificador,identificador1)){
                                 System.out.println("#            Não foi possível excluir a aresta            #");
                                 System.out.println("###########################################################");
                             }else{
@@ -387,10 +375,13 @@ public class GrafoCliente {
                         }
             			break;
             		case 6:
-            			break;
-            		case 7:
-            			break;
-            		case 8:                            
+                            ArrayList<Aresta> arestasV = (ArrayList<Aresta>)client.arestasDoVertice(2);
+                            for(Aresta ares: arestasV)
+                                System.out.println(ares.toString());
+                            
+                            break;
+            		
+            		case 7:                            
                             System.out.println("###########################################################");
                             System.out.println("#                                                         #");
                             System.out.println("#         Opção selecionada --> Adicionar Vértice         #");
@@ -432,7 +423,7 @@ public class GrafoCliente {
 
                             
                             break;
-            		case 9:                                
+            		case 8:                                
                             System.out.println("###########################################################");
                             System.out.println("#                                                         #");
                             System.out.println("#         Opção selecionada --> Buscar Vértice            #");
@@ -459,7 +450,7 @@ public class GrafoCliente {
                             }
                             
             			break;            		
-            		case 10:
+            		case 9:
                             System.out.println("###########################################################");
                             System.out.println("#                                                         #");
                             System.out.println("#         Opção selecionada --> Atualizar Vértice         #");
@@ -509,7 +500,7 @@ public class GrafoCliente {
                                 System.out.println("##########################################################");
                             }
                             break;
-            		case 11:
+            		case 10:
                             System.out.println("###########################################################");
                             System.out.println("#                                                         #");
                             System.out.println("#         Opção selecionada --> Excluir Vértice           #");
@@ -538,7 +529,7 @@ public class GrafoCliente {
                                 System.out.println("##########################################################");
                             }
                             break;
-            		case 12:
+            		case 11:
                             System.out.println("###########################################################");
                             System.out.println("#                                                         #");
                             System.out.println("#         Opção selecionada --> Listar vértices           #");
@@ -561,9 +552,28 @@ public class GrafoCliente {
                                 System.out.println("##########################################################");
                             }
                             break;
-            		case 13:
+            		case 12:
+                                Vertice vet = new Vertice(1,1,"1",1);
+                                Vertice vet1 = new Vertice(2,2,"2",2);
+                                Vertice vet2 = new Vertice(3,3,"3",3);
+                                Vertice vet3 = new Vertice(4,4,"4",4);
+                                
+                                client.addVertice(vet);
+                                client.addVertice(vet1);
+                                client.addVertice(vet2);
+                                client.addVertice(vet3);
+                                
+                                Aresta ar = new Aresta(vet, vet1,2,false,"teste");
+                                client.addAresta(ar);
+                                
+                                Aresta ar1 = new Aresta(vet1, vet2,3,true,"teste1");
+                                client.addAresta(ar1);
+                                
+                                ArrayList<Vertice> vts = (ArrayList<Vertice>)client.vizinhos(2);
+                                for(Vertice vs:vts)
+                                    System.out.println(vs.toString());
             			break;
-            		case 0:
+            		case 0: 
             			break;
             		default:
             			break;

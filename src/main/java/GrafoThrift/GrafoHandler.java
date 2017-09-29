@@ -26,7 +26,7 @@ public class GrafoHandler {
 
     public boolean excluiVertice(int id) throws org.apache.thrift.TException;
 
-    public boolean excluiAresta(int v1, int v2, int direcionada) throws org.apache.thrift.TException;
+    public boolean excluiAresta(int v1, int v2) throws org.apache.thrift.TException;
 
     public java.util.List<Vertice> listarVertices() throws NotFoundEx, org.apache.thrift.TException;
 
@@ -54,7 +54,7 @@ public class GrafoHandler {
 
     public void excluiVertice(int id, org.apache.thrift.async.AsyncMethodCallback<java.lang.Boolean> resultHandler) throws org.apache.thrift.TException;
 
-    public void excluiAresta(int v1, int v2, int direcionada, org.apache.thrift.async.AsyncMethodCallback<java.lang.Boolean> resultHandler) throws org.apache.thrift.TException;
+    public void excluiAresta(int v1, int v2, org.apache.thrift.async.AsyncMethodCallback<java.lang.Boolean> resultHandler) throws org.apache.thrift.TException;
 
     public void listarVertices(org.apache.thrift.async.AsyncMethodCallback<java.util.List<Vertice>> resultHandler) throws org.apache.thrift.TException;
 
@@ -254,18 +254,17 @@ public class GrafoHandler {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "excluiVertice failed: unknown result");
     }
 
-    public boolean excluiAresta(int v1, int v2, int direcionada) throws org.apache.thrift.TException
+    public boolean excluiAresta(int v1, int v2) throws org.apache.thrift.TException
     {
-      send_excluiAresta(v1, v2, direcionada);
+      send_excluiAresta(v1, v2);
       return recv_excluiAresta();
     }
 
-    public void send_excluiAresta(int v1, int v2, int direcionada) throws org.apache.thrift.TException
+    public void send_excluiAresta(int v1, int v2) throws org.apache.thrift.TException
     {
       excluiAresta_args args = new excluiAresta_args();
       args.setV1(v1);
       args.setV2(v2);
-      args.setDirecionada(direcionada);
       sendBase("excluiAresta", args);
     }
 
@@ -626,9 +625,9 @@ public class GrafoHandler {
       }
     }
 
-    public void excluiAresta(int v1, int v2, int direcionada, org.apache.thrift.async.AsyncMethodCallback<java.lang.Boolean> resultHandler) throws org.apache.thrift.TException {
+    public void excluiAresta(int v1, int v2, org.apache.thrift.async.AsyncMethodCallback<java.lang.Boolean> resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      excluiAresta_call method_call = new excluiAresta_call(v1, v2, direcionada, resultHandler, this, ___protocolFactory, ___transport);
+      excluiAresta_call method_call = new excluiAresta_call(v1, v2, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
@@ -636,12 +635,10 @@ public class GrafoHandler {
     public static class excluiAresta_call extends org.apache.thrift.async.TAsyncMethodCall<java.lang.Boolean> {
       private int v1;
       private int v2;
-      private int direcionada;
-      public excluiAresta_call(int v1, int v2, int direcionada, org.apache.thrift.async.AsyncMethodCallback<java.lang.Boolean> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public excluiAresta_call(int v1, int v2, org.apache.thrift.async.AsyncMethodCallback<java.lang.Boolean> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.v1 = v1;
         this.v2 = v2;
-        this.direcionada = direcionada;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
@@ -649,7 +646,6 @@ public class GrafoHandler {
         excluiAresta_args args = new excluiAresta_args();
         args.setV1(v1);
         args.setV2(v2);
-        args.setDirecionada(direcionada);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -982,7 +978,7 @@ public class GrafoHandler {
 
       public excluiAresta_result getResult(I iface, excluiAresta_args args) throws org.apache.thrift.TException {
         excluiAresta_result result = new excluiAresta_result();
-        result.success = iface.excluiAresta(args.v1, args.v2, args.direcionada);
+        result.success = iface.excluiAresta(args.v1, args.v2);
         result.setSuccessIsSet(true);
         return result;
       }
@@ -1610,7 +1606,7 @@ public class GrafoHandler {
       }
 
       public void start(I iface, excluiAresta_args args, org.apache.thrift.async.AsyncMethodCallback<java.lang.Boolean> resultHandler) throws org.apache.thrift.TException {
-        iface.excluiAresta(args.v1, args.v2, args.direcionada,resultHandler);
+        iface.excluiAresta(args.v1, args.v2,resultHandler);
       }
     }
 
@@ -7265,20 +7261,17 @@ public class GrafoHandler {
 
     private static final org.apache.thrift.protocol.TField V1_FIELD_DESC = new org.apache.thrift.protocol.TField("v1", org.apache.thrift.protocol.TType.I32, (short)1);
     private static final org.apache.thrift.protocol.TField V2_FIELD_DESC = new org.apache.thrift.protocol.TField("v2", org.apache.thrift.protocol.TType.I32, (short)2);
-    private static final org.apache.thrift.protocol.TField DIRECIONADA_FIELD_DESC = new org.apache.thrift.protocol.TField("direcionada", org.apache.thrift.protocol.TType.I32, (short)3);
 
     private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new excluiAresta_argsStandardSchemeFactory();
     private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new excluiAresta_argsTupleSchemeFactory();
 
     public int v1; // required
     public int v2; // required
-    public int direcionada; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       V1((short)1, "v1"),
-      V2((short)2, "v2"),
-      DIRECIONADA((short)3, "direcionada");
+      V2((short)2, "v2");
 
       private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
 
@@ -7297,8 +7290,6 @@ public class GrafoHandler {
             return V1;
           case 2: // V2
             return V2;
-          case 3: // DIRECIONADA
-            return DIRECIONADA;
           default:
             return null;
         }
@@ -7341,7 +7332,6 @@ public class GrafoHandler {
     // isset id assignments
     private static final int __V1_ISSET_ID = 0;
     private static final int __V2_ISSET_ID = 1;
-    private static final int __DIRECIONADA_ISSET_ID = 2;
     private byte __isset_bitfield = 0;
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
@@ -7349,8 +7339,6 @@ public class GrafoHandler {
       tmpMap.put(_Fields.V1, new org.apache.thrift.meta_data.FieldMetaData("v1", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32          , "int")));
       tmpMap.put(_Fields.V2, new org.apache.thrift.meta_data.FieldMetaData("v2", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32          , "int")));
-      tmpMap.put(_Fields.DIRECIONADA, new org.apache.thrift.meta_data.FieldMetaData("direcionada", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32          , "int")));
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(excluiAresta_args.class, metaDataMap);
@@ -7361,16 +7349,13 @@ public class GrafoHandler {
 
     public excluiAresta_args(
       int v1,
-      int v2,
-      int direcionada)
+      int v2)
     {
       this();
       this.v1 = v1;
       setV1IsSet(true);
       this.v2 = v2;
       setV2IsSet(true);
-      this.direcionada = direcionada;
-      setDirecionadaIsSet(true);
     }
 
     /**
@@ -7380,7 +7365,6 @@ public class GrafoHandler {
       __isset_bitfield = other.__isset_bitfield;
       this.v1 = other.v1;
       this.v2 = other.v2;
-      this.direcionada = other.direcionada;
     }
 
     public excluiAresta_args deepCopy() {
@@ -7393,8 +7377,6 @@ public class GrafoHandler {
       this.v1 = 0;
       setV2IsSet(false);
       this.v2 = 0;
-      setDirecionadaIsSet(false);
-      this.direcionada = 0;
     }
 
     public int getV1() {
@@ -7443,29 +7425,6 @@ public class GrafoHandler {
       __isset_bitfield = org.apache.thrift.EncodingUtils.setBit(__isset_bitfield, __V2_ISSET_ID, value);
     }
 
-    public int getDirecionada() {
-      return this.direcionada;
-    }
-
-    public excluiAresta_args setDirecionada(int direcionada) {
-      this.direcionada = direcionada;
-      setDirecionadaIsSet(true);
-      return this;
-    }
-
-    public void unsetDirecionada() {
-      __isset_bitfield = org.apache.thrift.EncodingUtils.clearBit(__isset_bitfield, __DIRECIONADA_ISSET_ID);
-    }
-
-    /** Returns true if field direcionada is set (has been assigned a value) and false otherwise */
-    public boolean isSetDirecionada() {
-      return org.apache.thrift.EncodingUtils.testBit(__isset_bitfield, __DIRECIONADA_ISSET_ID);
-    }
-
-    public void setDirecionadaIsSet(boolean value) {
-      __isset_bitfield = org.apache.thrift.EncodingUtils.setBit(__isset_bitfield, __DIRECIONADA_ISSET_ID, value);
-    }
-
     public void setFieldValue(_Fields field, java.lang.Object value) {
       switch (field) {
       case V1:
@@ -7484,14 +7443,6 @@ public class GrafoHandler {
         }
         break;
 
-      case DIRECIONADA:
-        if (value == null) {
-          unsetDirecionada();
-        } else {
-          setDirecionada((java.lang.Integer)value);
-        }
-        break;
-
       }
     }
 
@@ -7502,9 +7453,6 @@ public class GrafoHandler {
 
       case V2:
         return getV2();
-
-      case DIRECIONADA:
-        return getDirecionada();
 
       }
       throw new java.lang.IllegalStateException();
@@ -7521,8 +7469,6 @@ public class GrafoHandler {
         return isSetV1();
       case V2:
         return isSetV2();
-      case DIRECIONADA:
-        return isSetDirecionada();
       }
       throw new java.lang.IllegalStateException();
     }
@@ -7560,15 +7506,6 @@ public class GrafoHandler {
           return false;
       }
 
-      boolean this_present_direcionada = true;
-      boolean that_present_direcionada = true;
-      if (this_present_direcionada || that_present_direcionada) {
-        if (!(this_present_direcionada && that_present_direcionada))
-          return false;
-        if (this.direcionada != that.direcionada)
-          return false;
-      }
-
       return true;
     }
 
@@ -7579,8 +7516,6 @@ public class GrafoHandler {
       hashCode = hashCode * 8191 + v1;
 
       hashCode = hashCode * 8191 + v2;
-
-      hashCode = hashCode * 8191 + direcionada;
 
       return hashCode;
     }
@@ -7613,16 +7548,6 @@ public class GrafoHandler {
           return lastComparison;
         }
       }
-      lastComparison = java.lang.Boolean.valueOf(isSetDirecionada()).compareTo(other.isSetDirecionada());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetDirecionada()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.direcionada, other.direcionada);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
       return 0;
     }
 
@@ -7649,10 +7574,6 @@ public class GrafoHandler {
       if (!first) sb.append(", ");
       sb.append("v2:");
       sb.append(this.v2);
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("direcionada:");
-      sb.append(this.direcionada);
       first = false;
       sb.append(")");
       return sb.toString();
@@ -7715,14 +7636,6 @@ public class GrafoHandler {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 3: // DIRECIONADA
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.direcionada = iprot.readI32();
-                struct.setDirecionadaIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -7743,9 +7656,6 @@ public class GrafoHandler {
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(V2_FIELD_DESC);
         oprot.writeI32(struct.v2);
-        oprot.writeFieldEnd();
-        oprot.writeFieldBegin(DIRECIONADA_FIELD_DESC);
-        oprot.writeI32(struct.direcionada);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -7771,25 +7681,19 @@ public class GrafoHandler {
         if (struct.isSetV2()) {
           optionals.set(1);
         }
-        if (struct.isSetDirecionada()) {
-          optionals.set(2);
-        }
-        oprot.writeBitSet(optionals, 3);
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetV1()) {
           oprot.writeI32(struct.v1);
         }
         if (struct.isSetV2()) {
           oprot.writeI32(struct.v2);
         }
-        if (struct.isSetDirecionada()) {
-          oprot.writeI32(struct.direcionada);
-        }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, excluiAresta_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
-        java.util.BitSet incoming = iprot.readBitSet(3);
+        java.util.BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           struct.v1 = iprot.readI32();
           struct.setV1IsSet(true);
@@ -7797,10 +7701,6 @@ public class GrafoHandler {
         if (incoming.get(1)) {
           struct.v2 = iprot.readI32();
           struct.setV2IsSet(true);
-        }
-        if (incoming.get(2)) {
-          struct.direcionada = iprot.readI32();
-          struct.setDirecionadaIsSet(true);
         }
       }
     }
