@@ -5,15 +5,13 @@
  */
 package GrafoHandler;
 
-import GrafoJava.IdentificadorAresta;
 import GrafoThrift.Grafo;
-import GrafoThrift.Identificador;
 import GrafoThrift.Vertice;
 import GrafoThrift.GrafoHandler;
 import GrafoThrift.Aresta;
+import GrafoThrift.Identificador;
 import GrafoThrift.NotFoundEx;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,48 +29,45 @@ public class Handler implements GrafoHandler.Iface{
     ConcurrentHashMap<Identificador, Aresta> A = new ConcurrentHashMap<>();
     
     Grafo grafo = new Grafo(V, A);
-    AtomicBoolean emUso = new AtomicBoolean(false); 
     
     @Override
     public boolean addAresta(Aresta a) throws TException {
         if(a.getV1().getNome() != a.getV2().getNome() && V.containsKey(a.getV1().getNome()) && V.containsKey(a.getV2().getNome())){
-            IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, true,  A.size());
-            IdentificadorAresta ida1 = new IdentificadorAresta(a.getV2().nome, a.getV1().nome, true, A.size());
-            IdentificadorAresta ida2 = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, false, A.size());            
-            
-            boolean ok = false;        
-            
-            if(emUso.compareAndSet(false,true)){ //regiao critica                
-                if(!a.isDirecionada()){ //se não for direcionada, verificar se existe alguma direcionada e não direcionada que entra em conflito
-                    if(!A.containsKey(ida) && !A.containsKey(ida1) && !A.containsKey(ida2)){
-                        A.putIfAbsent(ida2, a);
-                        ok = true;
-                    }
+            synchronized(a){
+                try{
+                    Aresta ar = buscaAresta(a.getV1().getNome(), a.getV2().getNome());                
+                    return false;
                 }
-                else{//se for direcionada, procurar alguma direcionada ou não direcionada que entre em conflito                    
-                    if(!A.containsKey(ida) && !A.containsKey(ida2)){
-                        A.putIfAbsent(ida, a);
-                        ok = true;
-                    }
-                }
-                emUso.set(false); 
-                return ok;
-            }
+                catch(NotFoundEx ex){
+                    Identificador ida = new Identificador(a.getV1().nome, a.getV2().nome, a.direcionada);
+                    A.putIfAbsent(ida, a);
+                }                
+                return true;
+            }            
         }
         return false;
     }    
     
     @Override
     public Aresta buscaAresta(int v1, int v2) throws NotFoundEx, TException {
-        IdentificadorAresta ida = new IdentificadorAresta(v1, v2, true, A.size());
-        Aresta a = A.get(ida);
-        if(a != null)
-            return a;
-        else{
-            ida.setDirecionada(false);
-            a = A.get(ida);
+        Identificador ida = new Identificador(v1, v2, true);
+        Identificador ida1 = new Identificador(v1, v2, false);
+        Identificador ida2 = new Identificador(v2, v1, false);
+        
+        synchronized(ida){
+            Aresta a = A.get(ida);
             if(a != null)
                 return a;
+            else{
+                a = A.get(ida1);
+                if(a != null)
+                    return a;  
+                else{
+                    a = A.get(ida2);
+                    if(a != null)
+                        return a;  
+                }
+            }
         }
         
         throw new NotFoundEx();
@@ -81,30 +76,28 @@ public class Handler implements GrafoHandler.Iface{
     @Override
     public Vertice buscaVertice(int nome) throws NotFoundEx, TException {
         Vertice v = V.get(nome);
-        if(v != null)
-            return v;
+        synchronized(v){
+            if(v != null)
+                return v;
+        }
         
         throw new NotFoundEx();
     }
 
     @Override
-    public boolean atualizaAresta(Aresta a) throws TException {
-        IdentificadorAresta ida = new IdentificadorAresta(a.getV1().nome, a.getV2().nome, a.isDirecionada(), A.size());        
-        boolean ok = false;
-        if(emUso.compareAndSet(false,true)){ 
-            //regiao critica            
-            Aresta ar = A.get(ida);
-            
-            if(ar != null){
-                A.replace(ida, a);
-                ok = true;
+    public boolean atualizaAresta(Aresta a) throws TException {                
+        Identificador ida = new Identificador(a.getV1().nome, a.getV2().nome, a.direcionada);
+        synchronized(a){
+            try{
+                Aresta ar = buscaAresta(a.getV1().nome, a.getV2().nome);
+                
+                A.replace(ida, ar, a);
+                return true;                
             }
-            else
-                ok = false;
-            emUso.set(false); 
-            return ok;
+            catch(NotFoundEx ex){
+                return false;
+            }            
         }
-        return false;
     }
 
     @Override
@@ -117,87 +110,125 @@ public class Handler implements GrafoHandler.Iface{
     }
 
     @Override
-    public boolean atualizaVertice(Vertice v) throws TException {                             
+    public boolean atualizaVertice(Vertice v) throws TException {    
         Vertice vt = V.get(v.getNome());
-
-        if(vt != null){
-            synchronized(vt){
+        
+        synchronized(vt){            
+            if(vt != null){        
                 V.replace(vt.nome, vt, v);
                 return true;
-            }
+            }        
         }
         
         return false;
     }
     
     @Override
-    public boolean excluiAresta(int v1, int v2, int direcionada) throws TException {
+    public boolean excluiAresta(int v1, int v2) throws TException {        
         Aresta a = buscaAresta(v1, v2);
         synchronized(a){
-            //A.re
+            Identificador ida = new Identificador(v1, v2, a.isDirecionada());
+            A.remove(ida);
             return true;
         }        
     }
     
     @Override
-    public boolean excluiVertice(int id) throws TException {        
-        boolean ok = false;
-        if(emUso.compareAndSet(false,true)){ 
-            //regiao critica            
-            Vertice vt = V.get(id);
-            
+    public boolean excluiVertice(int id) throws TException {                
+        Vertice vt = V.get(id);
+        synchronized(vt){
             if(vt != null){
                 //Cria um arraylist de keys a serem removidas posteriormente
                 ArrayList<Identificador> arRemovidas = new ArrayList<>();
-                
+
                 //Percorre a hash de arestas e remove aquela que tiver um dos vértices com o nome igual ao parametro "id"
                 Set<Map.Entry<Identificador, Aresta>> arestas = A.entrySet();                
                 for(Iterator i = arestas.iterator(); i.hasNext();) {
                     Map.Entry<Identificador, Aresta> ar;
                     ar = (Map.Entry<Identificador, Aresta>) i.next();
                     Aresta valor = ar.getValue();
-                    
+
                     //Adiciona no arraylist as chaves a serem removidas
                     if(valor.getV1().getNome() == id || valor.getV2().getNome() == id)
                         arRemovidas.add(ar.getKey());
                 }
-                
+
                 //Remove as chaves
                 for(Identificador i:arRemovidas)
                     A.remove(i); 
                 V.remove(vt.nome);
-                ok = true;
+                
+                return true;
             }
-            emUso.set(false); 
-            return ok;
         }
         return false;
     }
 
     @Override
-    public List<Vertice> listarVertices() throws NotFoundEx, TException {       
-        if(!V.isEmpty())           
-            return new ArrayList(V.values());      
-
+    public List<Vertice> listarVertices() throws NotFoundEx, TException {
+        synchronized(V.values()){
+            if(!V.isEmpty())           
+                return new ArrayList(V.values());      
+        }
         throw new NotFoundEx();
     }
 
     @Override
     public List<Aresta> listarArestas() throws NotFoundEx, TException {
-        if(!A.isEmpty())
-            return new ArrayList(A.values());
-        
+        synchronized(A.values()){
+            if(!A.isEmpty())
+                return new ArrayList(A.values());
+        }
         throw new NotFoundEx();
     }
 
     @Override
     public List<Aresta> arestasDoVertice(int nome) throws NotFoundEx, TException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ArrayList<Aresta> resp = new ArrayList<>();
+        
+        synchronized(A.values()){
+            Set<Map.Entry<Identificador, Aresta>> arestas = A.entrySet();                
+            for(Iterator i = arestas.iterator(); i.hasNext();) {
+                Map.Entry<Identificador, Aresta> ar;
+                ar = (Map.Entry<Identificador, Aresta>) i.next();
+                Aresta valor = ar.getValue();
+
+                //Adiciona no arraylist as chaves a serem removidas
+                if(!valor.direcionada){
+                    if(valor.getV1().getNome() == nome || valor.getV2().getNome() == nome)
+                        resp.add(valor);
+                }
+                else
+                    if(valor.getV1().getNome() == nome)
+                        resp.add(valor);
+                
+                
+            }
+            if(!resp.isEmpty())
+                return resp;
+        }
+
+        throw new NotFoundEx();
     }
 
     @Override
     public List<Vertice> vizinhos(int nome) throws NotFoundEx, TException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try{
+            ArrayList<Aresta> arestas = (ArrayList<Aresta>)arestasDoVertice(nome);            
+            synchronized(arestas){
+                ArrayList<Vertice> resp = new ArrayList<>();
+                for(Aresta a:arestas){
+                    if(a.getV1().getNome() != nome)
+                        resp.add(a.getV1());
+                    else
+                        resp.add(a.getV2());
+                }
+                return resp;
+            }            
+        }
+        catch(NotFoundEx ex){
+            throw new NotFoundEx();
+        }
     }
   
 }
