@@ -7,6 +7,7 @@ package GrafoHandler;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.Locale;
 import java.util.Scanner;
 
 import org.apache.thrift.TException;
@@ -19,7 +20,6 @@ import GrafoThrift.Aresta;
 import GrafoThrift.GrafoHandler;
 import GrafoThrift.NotFoundEx;
 import GrafoThrift.Vertice;
-import java.util.Locale;
 
 /**
  *
@@ -50,6 +50,8 @@ public class GrafoCliente {
 				System.out.println("#         Marcelo Prado e Rhaniel Cristhian          #");
 				System.out.println("######################################################");
 
+				System.out.println();
+				
 				System.out.println("Escolha a operação desejada:");
 				// Operações relacionadas as Arestas
 				System.out.println("1) Adicionar Aresta");
@@ -66,6 +68,7 @@ public class GrafoCliente {
 				System.out.println("10) Exclui Vértice");
 				System.out.println("11) Lista Vértices");
 				System.out.println("12) Lista os vizinhos de um vértice");
+				System.out.println("13) Macro para executar todas as operações");
 
 				// Sair
 				System.out.println("0) Sair");
@@ -586,11 +589,102 @@ public class GrafoCliente {
 
 						System.out.println();
 					} catch (NotFoundEx nfe) {
-						System.out.println("#               Vértice informado não existe              #");
+						System.out.println("#          Vértice informado não possui vizinhos          #");
 						System.out.println("###########################################################");
 					} catch (Exception e) {
 						System.out.println("#         Ocorreu alguma falha durante a operação         #");
 						System.out.println("###########################################################");
+					}
+					break;
+				case 13:
+					System.out.println("###########################################################");
+					System.out.println("#                                                         #");
+					System.out.println("#        Opção selecionada --> Macro das Operações        #");
+					System.out.println("#                                                         #");
+					System.out.println("###########################################################");
+					System.out.println();
+					
+					try{
+						System.out.println("#  Criando 5 vértices diferentes: ");
+						Vertice vet = new Vertice(1, 1, "v1", 1);
+						Vertice vet1 = new Vertice(2, 2, "v2", 2);
+						Vertice vet2 = new Vertice(3, 3, "v3", 3);
+						Vertice vet3 = new Vertice(4, 4, "v4", 4);
+						Vertice vet4 = new Vertice(5, 5, "v5", 5);
+
+						if(client.addVertice(vet) && client.addVertice(vet1) && client.addVertice(vet2) && client.addVertice(vet3)
+								&& client.addVertice(vet4)){
+							System.out.println("#  Vértices Criados com sucesso");
+							listaVertices(client);
+						}else{
+							System.out.println("#  Falha ao criar algum dos vértices");
+						}
+						System.out.println();
+						System.out.println("#  Criando vértice repetido: ");
+						if(!client.addVertice(vet)){
+							System.out.println("#  Vértice já existe");
+							System.out.println();
+						}
+						
+						//OPERAÇÕES DE BUSCA
+						System.out.println("#  Operação de busca do vértice");
+						System.out.println("#  Buscando o vertice (1, 1, 'v1', 1)");
+						v1 = client.buscaVertice(1);
+						System.out.println("#  Vértice que foi retornado: "+ v1.toString());
+						System.out.println();
+						System.out.println("#  Buscando um vértice que não existe (6, 6, 'v6', 6)");
+						try{
+							v1 = client.buscaVertice(6);
+						}catch(Exception e){
+							System.out.println("#  Vértice não existe no grafo");
+							System.out.println();
+						}
+						
+						//OPERAÇÕES DE ATUALIZAÇÃO DO VÉRTICE
+						System.out.println("#  Atualiza o vertice (1, 1, 'v1', 1) para (1, 1, 'v1-Atualizado', 1)");
+						System.out.println("#  Vértice antes de ser atualizado: "+vet.toString());
+
+						v1 = client.buscaVertice(1);
+						v1.setDescricao("v1-Atualizado");
+						if(client.atualizaVertice(v1)){
+							System.out.println("#  Vértice atualizado: ");
+							listaVertices(client);
+						}
+						System.out.println();
+						System.out.println("#  Tentando Atualizar um vértice que não existe");
+						
+						if(!client.atualizaVertice(new Vertice(6,6,"v6",6))){
+							System.out.println("#  Falha ao atualizar o vértice");
+							System.out.println();
+						}
+						
+						//EXCLUI VÉRTICE
+						System.out.println("#  Excluindo um vértice");
+						System.out.println("#  Vértice a ser excluido: "+client.buscaVertice(5));
+
+						if(client.excluiVertice(5)){
+							System.out.println("#  Vértice foi excluido");
+							listaVertices(client);
+						}
+						System.out.println();
+						System.out.println("#  Tentando Excluir um vértice que não existe id 6");
+						
+						if(!client.excluiVertice(6)){
+							System.out.println("#  Falha ao excluir o vértice");
+							System.out.println();
+						}
+						
+						//OPERAÇÕES COM ARESTAS
+						
+						//ADICIONAR ARESTAS
+						System.out.println("#  Tentando Atualizar um vértice que não existe");
+						Aresta ar = new Aresta(vet, vet1, 2, false, "teste");
+						client.addAresta(ar);
+						Aresta ar1 = new Aresta(vet1, vet2, 3, true, "teste1");
+						client.addAresta(ar1);
+						
+					}catch(Exception e){
+						
 					}
 					break;
 				case 0:
@@ -605,5 +699,19 @@ public class GrafoCliente {
 		} catch (TException x) {
 			x.printStackTrace();
 		}
+	}
+	public static final void listaVertices(GrafoHandler.Client client) throws NotFoundEx, TException{
+		ArrayList<Vertice> vertices = (ArrayList<Vertice>) client.listarVertices();
+		for (Vertice vt : vertices)
+			System.out.println(vt.toString());
+
+		System.out.println();
+	}
+	public static final void listaArestas(GrafoHandler.Client client) throws NotFoundEx, TException{
+		ArrayList<Aresta> arestas = (ArrayList<Aresta>) client.listarArestas();
+		for (Aresta at : arestas)
+			System.out.println(at.toString());
+
+		System.out.println();
 	}
 }
