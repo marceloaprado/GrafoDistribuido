@@ -659,9 +659,13 @@ public class GrafoCliente {
 						}
 						
 						//EXCLUI VÉRTICE
-						System.out.println("#  Excluindo um vértice");
-						System.out.println("#  Vértice a ser excluido: "+client.buscaVertice(5));
-
+                                                try{
+                                                    System.out.println("#  Excluindo um vértice");
+                                                    System.out.println("#  Vértice a ser excluido: "+client.buscaVertice(5));
+                                                }catch(NotFoundEx e){
+                                                    System.out.println("#  Vértice não encontrado para exclusão");
+                                                }
+						
 						if(client.excluiVertice(5)){
 							System.out.println("#  Vértice foi excluido");
 							listaVertices(client);
@@ -681,17 +685,57 @@ public class GrafoCliente {
 						Aresta ar = new Aresta(vet, vet1, 2, false, "a1");
 						Aresta ar1 = new Aresta(vet1, vet2, 3, true, "a2");
 						Aresta ar2 = new Aresta(vet2, vet3, 4, true, "a3");
+                                                Aresta ar3 = new Aresta(vet1, vet, 3, true, "a4");
 
 						if(client.addAresta(ar2) && client.addAresta(ar1) && client.addAresta(ar)){
 							listaArestas(client);
 						}
 						System.out.println("#  Tentando adicionar aresta repetida");
-						if(!client.addAresta(ar2)) {
+						if(!(client.addAresta(ar2) || client.addAresta(ar3))) {
 							System.out.println("#  Falha ao adicionar aresta");
 						}
-						
-						//
-						
+						System.out.println("");
+						//BUSCANDO ARESTA
+                                                System.out.println("#  Buscando aresta");
+                                                System.out.println("#  Aresta a ser buscada id 1 e 2: ");
+                                                try{
+                                                    a = client.buscaAresta(1, 2);
+                                                    System.out.println("#  Aresta encontrada: "+a.toString());
+                                                    System.out.println("#  Tentando buscar uma aresta que não existe id 4 e 6");
+                                                    client.buscaAresta(4,6);
+                                                }catch(NotFoundEx e){
+                                                    System.out.println("#  Aresta não encontrada");
+                                                }
+                                                
+                                                //ATUALIZA ARESTA
+                                                System.out.println("");
+                                                System.out.println("#  Atualizando aresta");
+                                                a = client.buscaAresta(1,2);
+                                                System.out.println("#  Aresta a ser atualizada: "+ a.toString());
+                                                
+                                                a.setDescricao("arestaAtualizada");
+                                                
+                                                if(client.atualizaAresta(a)){
+                                                    System.out.println("#  Aresta atualizada com sucesso");
+                                                    listaArestas(client);
+                                                }
+                                                System.out.println("#  Tentando atualizar Aresta que não existe");
+                                                System.out.println("#  Aresta a ser atualizada com id 4 e 5");
+                                                if(!client.atualizaAresta(new Aresta(vet,vet3,2,true,"art6"))){
+                                                    System.out.println("#  Falha ao atualizar aresta");
+                                                }
+                                                System.out.println("");
+                                                System.out.println("#  Excluindo aresta");
+                                                System.out.println("#  Aresta a ser excluida: "+client.buscaAresta(2, 1));
+                                                if(client.excluiAresta(2, 1)){
+                                                    System.out.println("#  Aresta excluida com sucesso");
+                                                    listaArestas(client);
+                                                }
+                                                System.out.println("#  Tentando excluir aresta que não existe");
+                                                System.out.println("#  Tenta excluir uma aresta com id 5 e 6 ");
+                                                if(!client.excluiAresta(5, 6)){
+                                                    System.out.println("#  Falha ao exclui aresta");
+                                                }
 					}catch(Exception e){
 						
 					}
