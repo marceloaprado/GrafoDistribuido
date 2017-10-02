@@ -99,7 +99,9 @@ public class Handler implements GrafoHandler.Iface {
 
     public boolean atualizaVertice(Vertice v) throws TException {        
         Vertice vt = V.computeIfPresent(v.getNome(), (Integer a, Vertice b) -> {
-            V.replace(v.getNome(), b, v); 
+            b.setCor(v.getCor());
+            b.setDescricao(v.getDescricao());
+            b.setPeso(v.getPeso());
             return b;
         });
                 
