@@ -20,6 +20,8 @@ import GrafoThrift.GrafoHandler;
 import GrafoThrift.Identificador;
 import GrafoThrift.NotFoundEx;
 import GrafoThrift.Vertice;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -102,6 +104,17 @@ public class Handler implements GrafoHandler.Iface {
             b.setCor(v.getCor());
             b.setDescricao(v.getDescricao());
             b.setPeso(v.getPeso());
+            
+            try {
+                for(Aresta ar : arestasDoVertice(v.getNome())){
+                    if(ar.getV1().getNome() == v.getNome())
+                        ar.setV1(b);
+                    if(ar.getV2().getNome() == v.getNome())
+                        ar.setV2(b);                    
+                }
+            } catch (TException ex) {
+                
+            }
             return b;
         });
                 
