@@ -46,8 +46,8 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <!--<mainClass>GrafoHandler.GrafoServidor</mainClass>-->
-                            <mainClass>GrafoHandler.GrafoCliente</mainClass>
+                            <mainClass>GrafoHandler.GrafoServidor</mainClass>
+                            <!--<mainClass>GrafoHandler.GrafoCliente</mainClass>-->
                         </manifest>
                     </archive>
                     <descriptorRefs>

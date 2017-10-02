@@ -507,34 +507,30 @@ public class GrafoCliente {
 						System.out.print("#  Informe o identificador do vértice: ");
 						identificador = scan.nextInt();
 						scan.nextLine();
+						
+                                                client.buscaVertice(identificador);
+                                                
+                                                System.out.print("#  Informe a nova cor do vértice: ");
+                                                cor = scan.nextInt();
+                                                scan.nextLine();
 
-						v = client.buscaVertice(identificador);
+                                                System.out.print("#  Informe o novo peso do vértice: ");
+                                                peso = scan.nextDouble();
+                                                scan.nextLine();
 
-						if (v != null) {
-							System.out.print("#  Informe a nova cor do vértice: ");
-							cor = scan.nextInt();
-							scan.nextLine();
+                                                System.out.print("#  Informe a nova descrição do vértice: ");
+                                                descricao = scan.nextLine();
+                                                Vertice vet1 = new Vertice(identificador, cor, descricao, peso);
+                                                
+                                                if (client.atualizaVertice(vet1)) {
+                                                        System.out.println("#             Vértice atualizado com sucesso              #");
+                                                        System.out.println("###########################################################");
+                                                } else {
+                                                        System.out.println("#               Falha ao atualizar Vértice                #");
+                                                        System.out.println("###########################################################");
+                                                }
+                                                System.out.println();
 
-							System.out.print("#  Informe o novo peso do vértice: ");
-							peso = scan.nextDouble();
-							scan.nextLine();
-
-							System.out.print("#  Informe a nova descrição do vértice: ");
-							descricao = scan.nextLine();
-
-							v.setCor(cor);
-							v.setDescricao(descricao);
-							v.setPeso(peso);
-
-							if (client.atualizaVertice(v)) {
-								System.out.println("#             Vértice atualizado com sucesso              #");
-								System.out.println("###########################################################");
-							} else {
-								System.out.println("#               Falha ao atualizar Vértice                #");
-								System.out.println("###########################################################");
-							}
-							System.out.println();
-						}
 					} catch (NotFoundEx nfe) {
 						System.out.println("#                 Vértice não encontrado                  #");
 						System.out.println("###########################################################");
