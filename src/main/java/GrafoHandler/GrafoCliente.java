@@ -20,6 +20,9 @@ import GrafoThrift.Aresta;
 import GrafoThrift.GrafoHandler;
 import GrafoThrift.NotFoundEx;
 import GrafoThrift.Vertice;
+import TesteConcorrencia.ThreadComandos;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -31,9 +34,12 @@ import GrafoThrift.Vertice;
  *         GrafoHandler)
  */
 public class GrafoCliente {
-	public static void main(String[] args) {
+        static String args[] = {"localhost", "9090"};
+        
+	public static void main(String[] args1) {
 		try {
-			TTransport transport = new TSocket("localhost", 9090);
+                        
+			TTransport transport = new TSocket(args[0], Integer.parseInt(args[1]));
 			transport.open();
 
 			TProtocol protocol = new TBinaryProtocol(transport);
@@ -68,7 +74,8 @@ public class GrafoCliente {
 				System.out.println("10) Exclui Vértice");
 				System.out.println("11) Lista Vértices");
 				System.out.println("12) Lista os vizinhos de um vértice");
-				System.out.println("13) Macro para executar todas as operações");
+				System.out.println("13) Macro p/ verificar controle de concorrência");
+                                System.out.println("14) Macro p/ executar todas as operações");
 
 				// Sair
 				System.out.println("0) Sair");
@@ -596,7 +603,40 @@ public class GrafoCliente {
 						System.out.println("###########################################################");
 					}
 					break;
+                                        
 				case 13:
+                                    System.out.println("###########################################################");
+                                    System.out.println("#                                                         #");
+                                    System.out.println("# Opção selecionada --> Macro p/ Controle de Concorrência #");
+                                    System.out.println("#                                                         #");
+                                    System.out.println("###########################################################");
+                                    System.out.println();                                    
+                                    
+                                    ThreadComandos t1 = new ThreadComandos(args[0], Integer.parseInt(args[1]), "Um");                                    
+                                    ThreadComandos t2 = new ThreadComandos(args[0], Integer.parseInt(args[1]), "Dois");
+                                    ThreadComandos t3 = new ThreadComandos(args[0], Integer.parseInt(args[1]), "Três");
+                                    ThreadComandos t4 = new ThreadComandos(args[0], Integer.parseInt(args[1]), "Quatro");
+                                    ThreadComandos t5 = new ThreadComandos(args[0], Integer.parseInt(args[1]), "Cinco");
+                                                                    
+                                    try {                                                                           
+                                        t1.start();
+                                        t2.start();
+                                        t3.start();
+                                        t4.start(); 
+                                        t5.start(); 
+                                        
+                                        t1.join();
+                                        t2.join();
+                                        t3.join();
+                                        t4.join();  
+                                        t5.join();  
+                                        
+                                    } catch (InterruptedException ex) {
+                                        System.out.println("Erro no Cliente: Falha ao rodar as threads");
+                                    }
+                                    
+                                    break;                                    
+                                case 14:
 					System.out.println("###########################################################");
 					System.out.println("#                                                         #");
 					System.out.println("#        Opção selecionada --> Macro das Operações        #");
