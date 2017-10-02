@@ -34,20 +34,38 @@ import java.util.logging.Logger;
  *         GrafoHandler)
  */
 public class GrafoCliente {
-        static String args[] = {"localhost", "9090"};
-        
-	public static void main(String[] args1) {
+	public static void main(String[] args) {
 		try {
+                        Scanner scan = new Scanner(System.in);
+			scan.useLocale(Locale.US);
+                        TTransport transport;
                         
-			TTransport transport = new TSocket(args[0], Integer.parseInt(args[1]));
+                        String ip = "";
+                        int porta = 9999;
+                        
+                        if(args.length == 0){
+                            System.out.println("Informe o endereço IP do servidor:");
+                            ip = scan.nextLine();
+                            
+                            System.out.println("Informe o número da porta:");
+                            porta = scan.nextInt();
+                            scan.nextLine();
+                            transport = new TSocket(ip, porta);
+                        }
+                        else
+                            transport = new TSocket(args[0], Integer.parseInt(args[1]));
+                            
+			
 			transport.open();
 
 			TProtocol protocol = new TBinaryProtocol(transport);
 			GrafoHandler.Client client = new GrafoHandler.Client(protocol);
+                        
+                        //Ainda não tá funcionando...
+                        //client.getInputProtocol().writeString("Thread Main conectada com sucesso!");
 
 			int menu = 1;
-			Scanner scan = new Scanner(System.in);
-			scan.useLocale(Locale.US);
+			
 			// Menu do usuário
 			while (menu != 0) {
 				System.out.println("######################################################");
@@ -612,11 +630,11 @@ public class GrafoCliente {
                                     System.out.println("###########################################################");
                                     System.out.println();                                    
                                     
-                                    ThreadComandos t1 = new ThreadComandos(args[0], Integer.parseInt(args[1]), "Um");                                    
-                                    ThreadComandos t2 = new ThreadComandos(args[0], Integer.parseInt(args[1]), "Dois");
-                                    ThreadComandos t3 = new ThreadComandos(args[0], Integer.parseInt(args[1]), "Três");
-                                    ThreadComandos t4 = new ThreadComandos(args[0], Integer.parseInt(args[1]), "Quatro");
-                                    ThreadComandos t5 = new ThreadComandos(args[0], Integer.parseInt(args[1]), "Cinco");
+                                    ThreadComandos t1 = new ThreadComandos(ip, porta,"Um");                                    
+                                    ThreadComandos t2 = new ThreadComandos(ip, porta,"Dois");
+                                    ThreadComandos t3 = new ThreadComandos(ip, porta,"Três");
+                                    ThreadComandos t4 = new ThreadComandos(ip, porta,"Quatro");
+                                    ThreadComandos t5 = new ThreadComandos(ip, porta,"Cinco");
                                                                     
                                     try {                                                                           
                                         t1.start();
@@ -780,6 +798,12 @@ public class GrafoCliente {
 						
 					}
 					break;
+                                case 15:
+                                    //easter egg
+                                    for(int i = 1; i <= 50; i++)                                        
+                                        client.addVertice(new Vertice(i, i, "v"+i, i));
+                                    
+                                    break;
 				case 0:
 					break;
 				default:

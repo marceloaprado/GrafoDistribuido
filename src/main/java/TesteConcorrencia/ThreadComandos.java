@@ -7,6 +7,10 @@ package TesteConcorrencia;
 
 import GrafoThrift.Aresta;
 import GrafoThrift.Vertice;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.thrift.TException;
@@ -28,14 +32,14 @@ public class ThreadComandos extends Thread {
     String nome;
     GrafoThrift.GrafoHandler.Client client;
     
-    public ThreadComandos(String ip, int porta, String nome) throws TTransportException{
+    public ThreadComandos(String ip, int porta, String nome) throws TTransportException, TException{
         TTransport transport = new TSocket(ip, porta);
-        transport.open();
+        transport.open();        
         this.protocol = new TBinaryProtocol(transport);;        
         this.ip = ip;
         this.porta = porta;
         this.client = new GrafoThrift.GrafoHandler.Client(protocol);
-        this.nome = nome;        
+        this.nome = nome;
     }
     
     public void TestarVertices() throws TException{
@@ -101,12 +105,25 @@ public class ThreadComandos extends Thread {
         }
     }
     
-    public void TestarBuscaArestas(){
+    public void TestarBuscaArestasExclusao() throws TException{
+        System.out.println("Thread " + this.nome + ": Tentando listar arestas");
+        ArrayList<Aresta> ars = (ArrayList<Aresta>)client.listarArestas();
+        System.out.println("Thread " + this.nome + ": Recuperou todas as arestas!");
         
-    }
-    
-    public void TestarAdicaoExclusao(){
-        
+        for(Aresta a : ars){
+            System.out.println("Thread " + this.nome + ": " + a.toString());
+            System.out.println("Thread " + this.nome + ": Tentando remover aresta 1,2");
+            if(!client.excluiAresta(1, 2))
+                System.out.println("Thread " + this.nome + ": Aresta 1,2 não pode ser removida");
+            else
+                System.out.println("Thread " + this.nome + ": Aresta 1,2 removida com sucesso!");
+                
+            System.out.println("Thread " + this.nome + ": Tentando remover aresta 2,3");
+            if(!client.excluiAresta(2, 3))
+                System.out.println("Thread " + this.nome + ": Aresta 2,3 não pode ser removida");
+            else
+                System.out.println("Thread " + this.nome + ": Aresta 2,3 removida com sucesso!");                
+        }
     }
     
     @Override
@@ -116,6 +133,7 @@ public class ThreadComandos extends Thread {
             System.out.println("####################### THREAD " + this.nome + " #######################");
         } catch (TException ex) {
             System.out.println("Thread " + this.nome + ": Erro desconhecido ao adicionar vértices");
+            System.out.println(ex.getCause() + " -> " + ex.getMessage());
         }
         
         try {
@@ -123,6 +141,15 @@ public class ThreadComandos extends Thread {
             System.out.println("####################### THREAD " + this.nome + " #######################");
         } catch (TException ex) {
             System.out.println("Thread " + this.nome + ": Erro desconhecido ao adicionar arestas");
+            System.out.println(ex.getCause() + " -> " + ex.getMessage());
+        }
+        
+        try {
+            this.TestarBuscaArestasExclusao();            
+            System.out.println("####################### THREAD " + this.nome + " #######################");
+        } catch (TException ex) {
+            System.out.println("Thread " + this.nome + ": Erro desconhecido ao tentar remover arestas enquanto é feita a listagem");
+            System.out.println(ex.getCause() + " -> " + ex.getMessage());
         }
         
         try {
@@ -130,6 +157,7 @@ public class ThreadComandos extends Thread {
             System.out.println("####################### THREAD " + this.nome + " #######################");
         } catch (TException ex) {
             System.out.println("Thread " + this.nome + ": Erro desconhecido ao excluir arestas");
+            System.out.println(ex.getCause() + " -> " + ex.getMessage());
         }
         
         try {
@@ -137,6 +165,7 @@ public class ThreadComandos extends Thread {
             System.out.println("####################### THREAD " + this.nome + " #######################");
         } catch (TException ex) {
             System.out.println("Thread " + this.nome + ": Erro desconhecido ao excluir vértices");
+            System.out.println(ex.getCause() + " -> " + ex.getMessage());
         }
     }    
 }

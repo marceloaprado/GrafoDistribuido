@@ -42,8 +42,8 @@ public class Handler implements GrafoHandler.Iface {
                     return false;
                 } catch (NotFoundEx ex) {
                     Identificador ida = new Identificador(a.getV1().nome, a.getV2().nome, a.direcionada);
-                    A.putIfAbsent(ida, a);
-                    return true;
+                    if(A.putIfAbsent(ida, a) == null)
+                        return true;
                 }                
             }
         }
