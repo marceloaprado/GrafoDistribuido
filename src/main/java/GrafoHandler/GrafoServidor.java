@@ -18,7 +18,8 @@ import org.apache.thrift.transport.TServerTransport;
 public class GrafoServidor {
     public static Handler handler;
     @SuppressWarnings("rawtypes")
-	public static GrafoHandler.Processor processor;
+    public static GrafoHandler.Processor processor;
+    static String args1[] = {"9090"};
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String args[]){
@@ -26,7 +27,7 @@ public class GrafoServidor {
             handler = new Handler();
             processor = new GrafoHandler.Processor(handler);
 
-            TServerTransport serverTransport = new TServerSocket(9090);            
+            TServerTransport serverTransport = new TServerSocket(Integer.parseInt(args1[0]));            
             
             TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
             
